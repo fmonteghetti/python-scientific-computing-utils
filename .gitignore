@@ -127,3 +127,14 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# mesh
+*.msh
+*.h5
+*.xdmf
+
+# JSON file
+*.json
+
+# Computational results
+*.vtu
