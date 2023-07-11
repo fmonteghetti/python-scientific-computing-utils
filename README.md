@@ -4,7 +4,10 @@
 
 - [Description](#description)
 - [Installation](#installation)
+- [Development in Visual Studio Code](#development-in-visual-studio-code)
 - [License](#license)
+
+# Description
 
 Collection of elementary wrappers (functions and classes) for rapid prototyping of numerical methods for partial differential equations in python. Tutorial scripts demonstrating the modules are available in the `demos` folder.
 
@@ -14,23 +17,31 @@ The provided modules rely on the following packages:
 - `petsc4py`: sparse linear algebra.
 - `slepc`: sparse eigensolver.
 
-## Installation
+# Installation
 
-Build and install with
+Build and install with:
 
 ```console
 hatch build
 pip install dist/scientific_computing_utils-*.whl
 ```
 
-To modify the package, perform a local editable installation with
+# Development in Visual Studio Code
+
+Install the package in editable mode:
 
 ```console
-pip install -e /path/to/repository
+    # in a virtual environment
+pip install -e /path/to/repository # virtual environment
+    # in a conda environment
+pip install --no-build-isolation --no-deps -e /path/to/repository
 ```
 
-When working within a conda environment, append the arguments `--no-build-isolation --no-deps` to the above `pip` commands.
+In the command palette of VS code:
 
-## License
+- `File: open workspace from file` and select the desired `.code-workspace` file in the `.vscode` folder
+- `Python: Select Interpreter` and select the python environment where the package has been installed.
 
-`scientific-computing-utils` is distributed under the terms of the GPLv3 license.
+# License
+
+This package is distributed under the terms of the GPLv3 license.

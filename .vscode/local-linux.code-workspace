@@ -1,0 +1,14 @@
+// Workspace for local python environment
+// https://code.visualstudio.com/docs/editor/workspaces
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+	],
+    "extensions": {
+		"recommendations": [
+		"ms-python.python",
+		"ms-toolsai.jupyter"]
+	  },
+  }
