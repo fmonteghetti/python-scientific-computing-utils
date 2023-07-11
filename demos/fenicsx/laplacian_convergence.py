@@ -19,15 +19,15 @@ from petsc4py import PETSc
 import numpy as np
     # Eigenvalue problem
 from slepc4py import SLEPc
-import SLEPc_utils
+from scientific_computing_utils import SLEPc_utils
 from mpi4py import MPI
     # Dolfinx
-import dolfinx
+from scientific_computing_utils import dolfinx
 import ufl
-import fenicsx_utils
+from scientific_computing_utils import fenicsx_utils
     # Mesh
-import gmsh_utils
-import meshio_utils
+from scientific_computing_utils import gmsh_utils
+from scientific_computing_utils import meshio_utils
     # Plot
 import matplotlib.pyplot as plt
 import pyvista as pv
@@ -125,7 +125,7 @@ plotter.show()
 #pv.save_meshio("result.vtk",grid)
 #%% Plot solution: alternative method
 # Create a pyvista barebone pyvista plotter, screenshot, matplotlib
-import pyvista_utils
+from scientific_computing_utils import pyvista_utils
 grid.clear_arrays()
 grid.point_data["u"] = uh.x.array.real
 grid.set_active_scalars("u")

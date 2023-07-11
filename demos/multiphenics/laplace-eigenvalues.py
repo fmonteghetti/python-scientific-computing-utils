@@ -15,18 +15,18 @@ multiplier.
 import numpy as np
 import matplotlib.pyplot as plt
 import fenics as fe
-import gmsh_utils
-import fenics_utils
-import meshio_utils
+from scientific_computing_utils import gmsh_utils
+from scientific_computing_utils import fenics_utils
+from scientific_computing_utils import meshio_utils
 import multiphenics as mpfe
-import multiphenics_utils
+from scientific_computing_utils import multiphenics_utils
 from petsc4py import PETSc
 fe.SubSystemsManager.init_petsc()
 PETSc.Sys.pushErrorHandler("python")
-import PETSc_utils
+from scientific_computing_utils import PETSc_utils
 from slepc4py import SLEPc
-import SLEPc_utils
-import PDE_exact
+from scientific_computing_utils import SLEPc_utils
+from scientific_computing_utils import PDE_exact
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 

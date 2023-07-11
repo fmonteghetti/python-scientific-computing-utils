@@ -15,10 +15,10 @@ The PDE is a Poisson equation with weight w(x).
 import numpy as np
 import matplotlib.pyplot as plt
 import fenics as fe
-import gmsh_utils
-import gmsh_utils_fenics
-import fenics_utils
-import meshio_utils
+from scientific_computing_utils import gmsh_utils
+from scientific_computing_utils import gmsh_utils_fenics
+from scientific_computing_utils import fenics_utils
+from scientific_computing_utils import meshio_utils
 import os
 #%% Generate mesh using gmsh (2D)
 # Dolfin only fully supports first-order meshes
@@ -127,7 +127,7 @@ def get_eigenvec(i):
     return EPS.get_eigenpair(i)[2:4]
 #%% Solve sparse eigenvalue problem:  using SLEPc directly for more control
 from slepc4py import SLEPc
-import SLEPc_utils
+from scientific_computing_utils import SLEPc_utils
 A_petsc = A.mat(); M_petsc = M.mat()
 SLEPc_params = {'nev': 50,
              'target': 10,

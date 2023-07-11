@@ -19,9 +19,9 @@ where km are the zeros of the m-th order Bessel function of the first kind Jm.
 import numpy as np
 import scipy.special
 import fenics as fe
-import fenics_utils
+from scientific_computing_utils import fenics_utils
 import matplotlib.pyplot as plt
-import SLEPc_utils
+from scientific_computing_utils import SLEPc_utils
 from slepc4py import SLEPc
 from petsc4py import PETSc
 #%% 

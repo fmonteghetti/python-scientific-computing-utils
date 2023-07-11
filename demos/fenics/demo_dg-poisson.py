@@ -25,9 +25,8 @@ document Laplace-equation-discretization.lyx.
 import fenics as fe
 from fenics import dot, grad, jump, avg
 import matplotlib.pyplot as plt
-import fenics_utils
+from scientific_computing_utils import fenics_utils
 import numpy as np
-
 
     # FIXME: Make mesh ghosted
 fe.parameters["ghost_mode"] = "shared_facet"
@@ -201,7 +200,7 @@ elif problem=="eigenvalue":
     A = fe.PETScMatrix(); M = fe.PETScMatrix()
     fenics_utils.assemble_GEP(A,a,M,b,bc,diag_A=1e2,diag_B=1e-2)
     from slepc4py import SLEPc
-    import SLEPc_utils
+    from scientific_computing_utils import SLEPc_utils
     A_petsc = A.mat(); M_petsc = M.mat()
     SLEPc_params = {'nev': 20,
                   'target': 10, 'shift': 10,

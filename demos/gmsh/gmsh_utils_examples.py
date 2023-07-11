@@ -5,7 +5,7 @@ This script demonstrates the use of the gmsh_utils functions.
 
 """
 
-import gmsh_utils
+from scientific_computing_utils import gmsh_utils
 
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")

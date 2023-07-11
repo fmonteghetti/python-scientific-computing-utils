@@ -17,11 +17,11 @@ and piecewise coefficient:
 import numpy as np
 import ufl
 import dolfinx
-import fenicsx_utils
+from scientific_computing_utils import fenicsx_utils
 from mpi4py import MPI
 from petsc4py import PETSc
 from slepc4py import SLEPc
-import SLEPc_utils
+from scientific_computing_utils import SLEPc_utils
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 

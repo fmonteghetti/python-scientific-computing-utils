@@ -17,12 +17,12 @@ Block assembly done using multiphenics. Time-integration done using Assimulo.
 import numpy as np
 import matplotlib.pyplot as plt
 import fenics as fe
-import gmsh_utils
-import gmsh_utils_fenics
-import fenics_utils
-import meshio_utils
+from scientific_computing_utils import gmsh_utils
+from scientific_computing_utils import gmsh_utils_fenics
+from scientific_computing_utils import fenics_utils
+from scientific_computing_utils import meshio_utils
 import multiphenics as mpfe
-import multiphenics_utils
+from scientific_computing_utils import multiphenics_utils
 from petsc4py import PETSc
 from mpi4py import MPI
 from assimulo.solvers import IDA, Radau5DAE, GLIMDA
