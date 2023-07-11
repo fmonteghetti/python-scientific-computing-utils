@@ -51,7 +51,6 @@ PETSC_ERR_MAX_VALUE        97  /* this is always the one more than the largest e
 """
 from mpi4py import MPI
 from slepc4py import SLEPc
-import SLEPc_utils
 import numpy as np
 
 def monitor_EPS_short(EPS, it, nconv, eig, err,it_skip):
@@ -195,7 +194,7 @@ def solve_GEP_shiftinvert(A,B,
     it_skip=1
     if comm.rank==0:
         EPS.setMonitor(lambda eps, it, nconv, eig, err :
-                       SLEPc_utils.monitor_EPS_short(eps, it, nconv, eig, err,it_skip))
+                       monitor_EPS_short(eps, it, nconv, eig, err,it_skip))
         # parse command line options
     EPS.setFromOptions()
         # Display all options (including those of ST object)

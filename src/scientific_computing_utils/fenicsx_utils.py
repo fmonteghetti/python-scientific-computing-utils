@@ -7,9 +7,8 @@
 from mpi4py import MPI
 import dolfinx.plot
 import ufl
-import gmsh_utils_fenicsx
+from scientific_computing_utils import gmsh_utils, gmsh_utils_fenicsx
 import pyvista as pv
-import gmsh_utils
 from petsc4py import PETSc
 
 def create_pyvista_UnstructuredGrid_from_mesh(mesh):

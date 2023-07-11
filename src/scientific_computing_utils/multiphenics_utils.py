@@ -7,11 +7,9 @@ Utility functions for multiphenics.
 import numpy as np
 import fenics as fe
 import multiphenics as mpfe
-import multiphenics_utils as mpfeutils
 from petsc4py import PETSc
-import psl_utils
+from scientific_computing_utils import psl_utils, PETSc_utils
 import time
-import PETSc_utils
 
 def get_function(y,sol_idx,sol_name,W):
     """ Get dolfin.Function from BlockFunctionSpace.
