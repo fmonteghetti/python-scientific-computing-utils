@@ -28,6 +28,8 @@ pip install dist/scientific_computing_utils-*.whl
 
 # Development in Visual Studio Code
 
+## Local
+
 Install the package in editable mode:
 
 ```console
@@ -39,8 +41,18 @@ pip install --no-build-isolation --no-deps -e /path/to/repository
 
 In the command palette of VS code:
 
-- `File: open workspace from file` and select the desired `.code-workspace` file in the `.vscode` folder
+- `File: Open Workspace from File` and select the desired `.code-workspace` file in the `.vscode` folder.
 - `Python: Select Interpreter` and select the python environment where the package has been installed.
+
+## Docker (for dolfinx)
+
+The file `.devcontainer/devcontainer.json` provides a development container that contains the `dolfinx` and `dolfinx_mpc` packages.
+
+To use it, in the command palette of VS code:
+
+- `Dev Containers: Open Folder in Container` and select root of this repository.
+- `File: Open Workspace from File` and select the `docker.code-workspace` file in the `.vscode` folder.
+- `Python: Select Interpreter` and select the python environment.
 
 # License
 
