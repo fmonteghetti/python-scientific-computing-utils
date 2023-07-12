@@ -135,6 +135,7 @@ dmypy.json
 
 # JSON file
 *.json
+!devcontainer.json
 
 # Computational results
 *.vtu
