@@ -40,16 +40,11 @@ RUN groupadd --gid $USER_GID $USER_NAME \
 
 # Target: real PetscScalar
 FROM base as real
-ARG USER_NAME
-USER $USER_NAME:$USER_NAME
 
 # Target: complex PetscScalar
 FROM base as complex
-ARG USER_NAME
 	# Build dolfinx_mpc for complex PetscScalar
-USER root:root
 ADD build_complex_dolfinx_mpc.sh /build_complex.sh
 RUN chmod +x /build_complex.sh \
     && /build_complex.sh \
     && echo "source /usr/local/bin/dolfinx-complex-mode" >> /home/$USER_NAME/.bashrc
-USER $USER_NAME:$USER_NAME
