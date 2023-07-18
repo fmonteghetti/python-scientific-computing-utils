@@ -9,7 +9,13 @@ import numpy
 import gmsh
 
 from mpi4py import MPI
-from dolfinx.io import extract_gmsh_geometry, extract_gmsh_topology_and_markers, ufl_mesh_from_gmsh
+try:
+    from dolfinx.io import extract_gmsh_geometry, extract_gmsh_topology_and_markers, ufl_mesh_from_gmsh
+except ImportError: # API change in 0.5.0
+    from dolfinx.io.gmshio import extract_geometry, extract_topology_and_markers, ufl_mesh
+    extract_gmsh_geometry = extract_geometry
+    extract_gmsh_topology_and_markers = extract_topology_and_markers
+    ufl_mesh_from_gmsh = ufl_mesh
 from dolfinx.cpp.io import perm_gmsh, distribute_entity_data
 from dolfinx.cpp.mesh import to_type, cell_entity_type
 from dolfinx.graph import create_adjacencylist
