@@ -22,7 +22,7 @@ from slepc4py import SLEPc
 from scientific_computing_utils import SLEPc_utils
 from mpi4py import MPI
     # Dolfinx
-from scientific_computing_utils import dolfinx
+import dolfinx
 import ufl
 from scientific_computing_utils import fenicsx_utils
     # Mesh
@@ -38,8 +38,11 @@ DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 # TODO: add comparison to exact eigenvalues
 # TODO: validate solution given by mixed approach, so as to be able to export
 # both fields of the mixed solution
-#%% Import mesh using gmsh
+#%% Create and import mesh using gmsh
+geofile=os.path.join(DIR_MESH,"Circle-simple.geo")
 gmshfile=os.path.join(DIR_MESH,"Circle-simple.msh")
+gmsh_utils.generate_mesh_cli(geofile,gmshfile,2,refinement=1,log=1,\
+                             parameters={'R':1,'R_TR':0.5},order=2)
 gmsh_utils.print_summary(gmshfile)
 phys_tag_1D = gmsh_utils.getPhysicalNames(gmshfile,1)
 phys_tag_2D = gmsh_utils.getPhysicalNames(gmshfile,2)
