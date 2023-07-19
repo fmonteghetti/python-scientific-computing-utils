@@ -12,7 +12,7 @@
 import dolfinx
 import dolfinx.io
 import dolfinx_mpc
-from scientific_computing_utils import dolfinx_mpc.utils
+from scientific_computing_utils import dolfinx_mpc_utils
 
 import ufl
 import numpy as np
