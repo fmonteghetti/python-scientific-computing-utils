@@ -31,6 +31,7 @@ from scientific_computing_utils import meshio_utils
     # Plot
 import matplotlib.pyplot as plt
 import pyvista as pv
+from scientific_computing_utils import pyvista_utils
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 
