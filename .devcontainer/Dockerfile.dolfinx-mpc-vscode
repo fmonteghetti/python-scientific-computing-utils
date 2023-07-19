@@ -29,6 +29,11 @@ RUN pip3 install --upgrade --no-cache-dir pyvista==${PYVISTA_VERSION}  \
                  gmsh==${GMSH_VERSION} matplotlib \
                  pandas
 
+# Install X virtual framebuffer and mesa (for pyvista plots)
+RUN apt-get update && apt-get -y install xvfb libglx-mesa0
+ENV DISPLAY=:99.0
+ENV PYVISTA_OFF_SCREEN=true
+
 # Add a passwd to root account
 RUN echo 'root:root' | chpasswd
 

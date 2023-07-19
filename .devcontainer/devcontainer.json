@@ -3,7 +3,7 @@
         "dockerfile": "Dockerfile.dolfinx-mpc-vscode",
         "target": "real",
         "args": {
-            "TAG": "v0.4.1",
+            "TAG": "v0.5.0",
             "PYVISTA_VERSION": "0.36.1",
             "GMSH_VERSION": "4.9.0",            
             "USER_NAME": "fenicsx",
