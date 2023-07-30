@@ -52,4 +52,4 @@ FROM base as complex
 ADD build_complex_dolfinx_mpc.sh /build_complex.sh
 RUN chmod +x /build_complex.sh \
     && /build_complex.sh \
-    && echo "source /usr/local/bin/dolfinx-complex-mode" >> /home/$USER_NAME/.bashrc
+    && echo "source /usr/local/bin/dolfinx-complex-mode" >> /etc/profile

@@ -1,7 +1,7 @@
 {
     "build": { 
         "dockerfile": "Dockerfile.dolfinx-mpc-vscode",
-        "target": "real",
+        "target": "complex",
         "args": {
             "TAG": "v0.5.0",
             "PYVISTA_VERSION": "0.36.1",
