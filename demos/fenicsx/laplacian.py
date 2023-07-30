@@ -27,7 +27,7 @@ The following features are demonstrated:
 - Visualize the solution using pyvista.
 - Use PETSc.ScalarType for compatibility with both complex and real PETSc.
 """
- 
+#%%
 from mpi4py import MPI
 comm = MPI.COMM_WORLD # dolfinx, petsc, and slepc use mpi communicators
 from petsc4py import PETSc
@@ -137,7 +137,7 @@ grid.point_data["u"] = uh.x.array
 V_proj = dolfinx.fem.VectorFunctionSpace(mesh, ("DG", degree_fem-1))
 phih_proj = fenicsx_utils.project(phih, V_proj,
                       petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
-grid.point_data["phi"] = np.reshape(phih_proj.x.array,(-1,dim))
+grid.point_data["phi"] = np.reshape(phih_proj.x.array.real,(-1,dim))
 grid.save(f"shared/demo_laplace_direct_mixed_{comm.rank}.vtu")
     # == Eigenvalue problem a(u,v) = l(v) with v in H^1
 t0 = time.process_time_ns()

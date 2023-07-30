@@ -14,6 +14,7 @@ and piecewise coefficient:
     kappa(x) = kappa_0 on (0,L_int), kappa_1 on (L_int,L)
 
 """
+#%%
 import numpy as np
 import ufl
 import dolfinx

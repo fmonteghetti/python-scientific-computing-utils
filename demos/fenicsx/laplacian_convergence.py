@@ -14,6 +14,7 @@ Content:
 - Export to vtu file
 - Post-processing with pyvista and matplotlib
 """
+#%%
     # Matrix
 from petsc4py import PETSc
 import numpy as np

@@ -11,7 +11,7 @@
 # with essential boundary conditions
 #   u=0 on Gamma_u, v=0 on Gamma_v
 # and periodic boundary conditions on the remaining boundaries.
-
+#%%
 import dolfinx
 import dolfinx.io
 import dolfinx_mpc

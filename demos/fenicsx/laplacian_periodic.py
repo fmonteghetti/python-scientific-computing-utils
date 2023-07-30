@@ -10,7 +10,7 @@ The problem solved is: find (u,lambda) such that
 
 Different set of boundary conditions are available: Dirichlet, Neumann, periodic.
 """
-
+#%%
 import dolfinx
 import dolfinx.io
 import dolfinx_mpc
