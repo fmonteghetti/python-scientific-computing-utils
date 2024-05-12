@@ -83,9 +83,25 @@ xc, sigma, A = [0.5,0.5], 0.02, 10
 f = A * ufl.exp(-((x[0] - xc[0]) ** 2 + (x[1] - xc[1]) ** 2) / sigma)
 a = ufl.inner(ufl.grad(u), ufl.grad(v)) * dmesh.dx
 l = ufl.inner(f, v) * dmesh.dx
-problem = dolfinx.fem.petsc.LinearProblem(a, l, bcs=bcs, 
-                      petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
-uh = problem.solve()
+    # Assemble matrix and vector
+a = dolfinx.fem.form(a)
+A = dolfinx.fem.petsc.assemble_matrix(a, bcs)
+A.assemble()
+l = dolfinx.fem.form(l)
+L = dolfinx.fem.petsc.assemble_vector(l)
+L.assemble()
+    # Apply Dirichlet b.c. to rhs
+dolfinx.fem.petsc.apply_lifting(L, [a], [bcs])
+L.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
+dolfinx.fem.petsc.set_bc(L, bcs)
+    # Solve
+solver = PETSc.KSP().create(comm)
+solver.setOperators(A)
+solver.setType(PETSc.KSP.Type.PREONLY)
+solver.getPC().setType(PETSc.PC.Type.LU)
+uh = dolfinx.fem.Function(V)
+solver.solve(L, uh.vector)
+uh.x.scatter_forward()
 comm.Barrier()
 if comm.rank ==0:
     print(f"Elapsed time (direct problem): {1e-9*(time.process_time_ns()-t0):1.2g}s")
@@ -186,3 +202,4 @@ mpi_print(f"Global indices of local dofs: {V.dofmap.index_map.local_range}")
 mpi_print(f"Size of uh.vector (= # of global dofs): {uh.vector.size}")
 mpi_print(f"Local size of uh.vector (= # of local dofs): {uh.vector.sizes[0]}")
 mpi_print(f"Size of uh.x (= # of local + ghost dofs): {uh.x.array.size}")
+# %%
