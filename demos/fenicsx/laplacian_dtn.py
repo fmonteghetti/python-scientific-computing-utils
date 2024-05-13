@@ -65,7 +65,7 @@ def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None,
 
     Returns
     -------
-    A_DtN: petsc4py.PETSc.Mat
+    A: petsc4py.PETSc.Mat
         Matrix of the bilinear form.
     """
     V = k.function_space
@@ -77,21 +77,26 @@ def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None,
     l = sum(l)
     L = dolfinx.fem.petsc.assemble_vector(dolfinx.fem.form(l))
     L.assemble()
-        # Convert vector L to a Nx1 sparse matrix
-        # TODO: enable multi-threading (L.getOwnershipRange())
-    L_ndarray = L.getArray()
-    L_nnz = L_ndarray.nonzero()[0]
-    Lmat = PETSc.Mat()
-    Lmat.create(comm)
-    Lmat.setSizes((L.size,1))
-    Lmat.setType('aij')
-    Lmat.setPreallocationNNZ(L_nnz.size)
-    Lmat.setValues(L_nnz.astype('int32'),0,L_ndarray[L_nnz])
-    Lmat.assemblyBegin()
-    Lmat.assemblyEnd()
-        # Compute tensor product L*L^T
-    A_DtN = Lmat.matTransposeMult(Lmat,fill=int(L_nnz.size/2),result=result)
-    return A_DtN
+        # Compute A_ij = L_i * L_j
+        # TODO: make this work with MPI
+    Lval = L.getArray()
+    Lval_nnz_idx = Lval.nonzero()[0]
+    if result==None:
+        A = PETSc.Mat()
+        A.create(comm)
+        A.setFromOptions()
+        A.setSizes((L.getSizes(),L.getSizes()))
+        A_nnz = np.zeros_like(Lval,dtype=int)
+        A_nnz[Lval_nnz_idx] = Lval_nnz_idx.size
+        A.setPreallocationNNZ(A_nnz.astype('int32'))
+        result = A
+    Lval = np.atleast_2d(Lval[Lval_nnz_idx]).transpose() # column vector
+    Lval = Lval @ Lval.transpose()
+    result.setValues(Lval_nnz_idx.astype('int32'),Lval_nnz_idx.astype('int32'),
+                                                                Lval.flatten())
+    result.assemblyBegin()
+    result.assemblyEnd()
+    return result
 
 def DtN_Laplace_circle(n,m):
     """ Expression of the DtN kernel for Laplace's equation on a circle. The DtN
