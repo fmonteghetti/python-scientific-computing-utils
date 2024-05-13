@@ -112,7 +112,7 @@ def DtN_Laplace_circle(n,m):
     """
     alpha = -n/np.pi
     theta_expr = lambda x: np.arctan2(x[1],x[0])
-    r_expr = lambda x: np.linalg.norm(x,2)
+    r_expr = lambda x: np.sqrt(x[0]**2 + x[1]**2)
     if n<=0:
         raise ValueError("Order n must be nonnegative.")
     if m==0:
@@ -126,18 +126,20 @@ def DtN_Laplace_circle(n,m):
 degree_mesh = 2
 degree_fem = 2
 dim = 2
-R0, R1 = 0.5, 1 
-lc = (R1-R0)/10
+R0, R1 = 0.5, 10 
+lc = (R1-R0)/30
 geofile=os.path.join(DIR_MESH,"Annulus-2D.geo")
     # Physical names
 Gamma_name = ['Gamma-0'] 
 DtN_name = ['Gamma-1']
 Omega_name = ['Omega'] 
-DtN_order = 5 # n>=1
-uD_n = 2
+DtN_order = 2   # n>=1
+r_expr = lambda x: np.sqrt(x[0]**2 + x[1]**2)
 theta_expr = lambda x: np.arctan2(x[1],x[0])
+uD_n = 2
 uD_expr = lambda x: np.sin(uD_n*theta_expr(x)) # Dirichlet data
-xc, sigma, A = [0.5,0.5], 0.02, 0
+uEx_expr = lambda x: ((R0/r_expr(x))**uD_n) * uD_expr(x) 
+xc, sigma, A = [0.0,0.0], 1.0, 0.0
 f_expr = lambda x: A * np.exp(-((x[0] - xc[0]) ** 2 + (x[1] - xc[1]) ** 2) / sigma)
     # == Create and read mesh
 gmshfile = geofile.replace(".geo",".msh")
@@ -151,7 +153,7 @@ comm.Barrier()
 dmesh = fenicsx_utils.DolfinxMesh.init_from_gmsh(gmshfile,dim,comm=comm)
 dim, mesh, name_2_tags = dmesh.dim, dmesh.mesh, dmesh.name_2_tags
 Gamma_tags = [t for name in Gamma_name for t in name_2_tags[-2][name]]
-
+Gamma_DtN_tags = [t for name in DtN_name for t in name_2_tags[1][name]]
     # == Weak formulation a(u,v) + a_DtN(u,v) = l(u,v) with v in H^1
     # Build distributed function space
 t0=time.process_time_ns()
@@ -178,7 +180,6 @@ dolfinx.fem.petsc.apply_lifting(L, [a], [bcs])
 L.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
 dolfinx.fem.petsc.set_bc(L, bcs)
     # Assemble DtN
-Gamma_DtN_tags = [t for name in DtN_name for t in name_2_tags[1][name]]
 A_DtN_list = list() # list of PETSc matrices
 k_fun = dolfinx.fem.Function(V)
 for n in np.arange(1,DtN_order+1):
@@ -188,7 +189,8 @@ for n in np.arange(1,DtN_order+1):
         A_DtN_list.append(alpha * assemble_matrix_double_facet_integral(k_fun,
                                                 Gamma_DtN_tags,dmesh,comm=comm))
 A_DtN=sum(A_DtN_list)
-A = A + A_DtN
+# A = A + A_DtN
+
     # Solve
 solver = PETSc.KSP().create(comm)
 solver.setOperators(A)
@@ -207,8 +209,22 @@ if comm.rank ==0:
 # Ideas to see an effect:
 # - Plot along r=cst and compare with and without DtN
 # - Plot normal derivative on DtN boundary
+# Error
+uEx = dolfinx.fem.Function(V)
+uEx.interpolate(uEx_expr)
+L2_error = ufl.inner(uh - uEx, uh - uEx) * dmesh.dx
+L2_error = dolfinx.fem.form(L2_error)
+L2_error = dolfinx.fem.assemble_scalar(L2_error)
+L2_error = np.sqrt(comm.allreduce(L2_error, op=MPI.SUM))
 
+if comm.rank == 0:
+    print(f"DoF : {V.tabulate_dof_coordinates().shape[0]}")
+    print(f"Error_L2 : {L2_error:.2e}")
+    # TODO: export both exact and computed
     # Export uh to a single XDMF file (currently supports only one function)
 with dolfinx.io.XDMFFile(mesh.comm, "shared/demo_laplace_dtn.xdmf", "w") as file:
     file.write_mesh(mesh)
     file.write_function(uh) # TODO: set the name
+with dolfinx.io.XDMFFile(mesh.comm, "shared/demo_laplace_dtn_exact.xdmf", "w") as file:
+    file.write_mesh(mesh)
+    file.write_function(uEx) # TODO: set the name
