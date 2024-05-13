@@ -87,7 +87,7 @@ def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,comm=MPI.COMM_WORLD
     Lmat.assemblyBegin()
     Lmat.assemblyEnd()
         # Compute tensor product L*L^T
-    A_DtN = Lmat.matTransposeMult(Lmat)
+    A_DtN = Lmat.matTransposeMult(Lmat,fill=int(L_nnz.size/2))
     return A_DtN
 
 def DtN_Laplace_circle(n,m):
@@ -111,6 +111,7 @@ def DtN_Laplace_circle(n,m):
         Function k_{n,m}.
     """
     alpha = -n/np.pi
+        # ufl.atan_2(x[1],x[0]) not supported with complex PETSc scalar
     theta = lambda x: np.arctan2(x[1],x[0])
     r = lambda x: np.sqrt(x[0]**2 + x[1]**2)
     if n<=0:
