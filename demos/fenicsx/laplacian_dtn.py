@@ -186,16 +186,13 @@ dolfinx.fem.petsc.set_bc(L, bcs)
     # Assemble DtN
 if DtN_order>0:
     k_fun = dolfinx.fem.Function(V)
-        # Initialize DtN matrix for re-use
-    k_fun.vector.set(1)
-    A_tmp = assemble_matrix_double_facet_integral(k_fun,Gamma_DtN_tags,dmesh,
-                                                                    comm=comm)
+    A_tmp = None
     for n in np.arange(1,DtN_order+1):
         for m in [0,1]:
             (alpha,k_expr) = DtN_Laplace_circle(n,m)
             k_fun.interpolate(k_expr)
-            assemble_matrix_double_facet_integral(k_fun,Gamma_DtN_tags,dmesh,
-                                                        result=A_tmp,comm=comm)
+            A_tmp = assemble_matrix_double_facet_integral(k_fun,Gamma_DtN_tags,
+                                                   dmesh,result=A_tmp,comm=comm)
             A.axpy(-alpha,A_tmp)
 
     # Solve
