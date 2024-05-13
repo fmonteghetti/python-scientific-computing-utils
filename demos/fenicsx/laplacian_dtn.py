@@ -40,7 +40,8 @@ from scientific_computing_utils import SLEPc_utils
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 
-def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,comm=MPI.COMM_WORLD):
+def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None,
+                                                           comm=MPI.COMM_WORLD):
     """ Assemble bilinear form defined by a double integral over facets 
     involving a kernel with separated variables:
 
@@ -57,6 +58,8 @@ def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,comm=MPI.COMM_WORLD
     Gamma_tags: list(int)
         Tags defining boundary Gamma.
     dmesh: scientific_computing_utils.fenicsx_utils.DolfinxMesh
+    result: petsc4py.PETSc.Mat
+        Optional return matrix (default: None).
     comm: mpi4py.MPI.Intracom
         MPI communicator.
 
@@ -87,7 +90,7 @@ def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,comm=MPI.COMM_WORLD
     Lmat.assemblyBegin()
     Lmat.assemblyEnd()
         # Compute tensor product L*L^T
-    A_DtN = Lmat.matTransposeMult(Lmat,fill=int(L_nnz.size/2))
+    A_DtN = Lmat.matTransposeMult(Lmat,fill=int(L_nnz.size/2),result=result)
     return A_DtN
 
 def DtN_Laplace_circle(n,m):
@@ -134,7 +137,7 @@ geofile=os.path.join(DIR_MESH,"Annulus-2D.geo")
 Gamma_name = ['Gamma-0'] 
 DtN_name = ['Gamma-1']
 Omega_name = ['Omega'] 
-DtN_order = 6   # n>=1 No DtN if 0
+DtN_order = 5   # n>=1 No DtN if 0
 r_expr = lambda x: np.sqrt(x[0]**2 + x[1]**2)
 theta_expr = lambda x: np.arctan2(x[1],x[0])
 uD_n = 5
@@ -183,12 +186,16 @@ dolfinx.fem.petsc.set_bc(L, bcs)
     # Assemble DtN
 if DtN_order>0:
     k_fun = dolfinx.fem.Function(V)
+        # Initialize DtN matrix for re-use
+    k_fun.vector.set(1)
+    A_tmp = assemble_matrix_double_facet_integral(k_fun,Gamma_DtN_tags,dmesh,
+                                                                    comm=comm)
     for n in np.arange(1,DtN_order+1):
         for m in [0,1]:
             (alpha,k_expr) = DtN_Laplace_circle(n,m)
             k_fun.interpolate(k_expr)
-            A_tmp = assemble_matrix_double_facet_integral(k_fun,
-                                                    Gamma_DtN_tags,dmesh,comm=comm)
+            assemble_matrix_double_facet_integral(k_fun,Gamma_DtN_tags,dmesh,
+                                                        result=A_tmp,comm=comm)
             A.axpy(-alpha,A_tmp)
 
     # Solve
