@@ -181,16 +181,14 @@ L.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
 dolfinx.fem.petsc.set_bc(L, bcs)
     # Assemble DtN
 if DtN_order>0:
-    A_DtN_list = list() # list of PETSc matrices
     k_fun = dolfinx.fem.Function(V)
     for n in np.arange(1,DtN_order+1):
         for m in [0,1]:
             (alpha,k_expr) = DtN_Laplace_circle(n,m)
             k_fun.interpolate(k_expr)
-            A_DtN_list.append(alpha * assemble_matrix_double_facet_integral(k_fun,
-                                                    Gamma_DtN_tags,dmesh,comm=comm))
-    A_DtN=sum(A_DtN_list)
-    A = A - A_DtN
+            A_tmp = assemble_matrix_double_facet_integral(k_fun,
+                                                    Gamma_DtN_tags,dmesh,comm=comm)
+            A.axpy(-alpha,A_tmp)
 
     # Solve
 solver = PETSc.KSP().create(comm)
