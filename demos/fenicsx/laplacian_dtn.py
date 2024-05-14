@@ -78,20 +78,26 @@ def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None,
     L = dolfinx.fem.petsc.assemble_vector(dolfinx.fem.form(l))
     L.assemble()
         # Compute A_ij = L_i * L_j
-        # TODO: make this work with MPI
-    Lval = L.getArray()
-    Lval_nnz_idx = Lval.nonzero()[0]
+        # TODO: make this work with MPI by using a scatter to get all
+        # non-zero values of L. We only set diagonal block here.
+    (n,N) = L.getSizes()
+    Lval = L.getArray() # vector of length n
+    Lval_nnz_idx = Lval.nonzero()[0] # index of non-zero elements
+    Lval_nnz = Lval_nnz_idx.size
     if result==None:
         A = PETSc.Mat()
         A.create(comm)
+        A.setSizes(((n,N),(n,N)))
         A.setFromOptions()
-        A.setSizes((L.getSizes(),L.getSizes()))
-        A_nnz = np.zeros_like(Lval,dtype=int)
-        A_nnz[Lval_nnz_idx] = Lval_nnz_idx.size
+        A_nnz = np.zeros(n,dtype=int)
+        A_nnz[Lval_nnz_idx] = Lval_nnz
         A.setPreallocationNNZ(A_nnz.astype('int32'))
         result = A
-    result.setValues(Lval_nnz_idx.astype('int32'),Lval_nnz_idx.astype('int32'),
-                                np.kron(Lval[Lval_nnz_idx],Lval[Lval_nnz_idx]))
+    rows = result.getOwnershipRange()
+    rows_idx_local_to_global = np.arange(rows[0],rows[1],dtype='int32')
+    result.setValues(rows_idx_local_to_global[Lval_nnz_idx],
+                     Lval_nnz_idx.astype('int32'),
+                     np.kron(Lval[Lval_nnz_idx],Lval[Lval_nnz_idx]))
     result.assemblyBegin()
     result.assemblyEnd()
     return result
@@ -195,7 +201,7 @@ if DtN_order>0:
             (alpha,k_expr) = DtN_Laplace_circle(n,m)
             k_fun.interpolate(k_expr)
             A_tmp = assemble_matrix_double_facet_integral(k_fun,Gamma_DtN_tags,
-                                                   dmesh,result=A_tmp,comm=comm)
+                                                   dmesh,result=None,comm=comm)
             A.axpy(-alpha,A_tmp)
 
     # Solve
