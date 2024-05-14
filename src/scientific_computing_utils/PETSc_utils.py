@@ -7,6 +7,41 @@ import numpy as np
 import scipy.sparse as sp
 from petsc4py import PETSc
 
+
+def kron_vector(L,result=None):
+    """Compute the matrix A_{ij} = L_i*L_j, where L is a vector. 
+
+    Parameters
+    ----------
+    L : petsc4py.PETSc.Vec
+    result : petsc4py.PETSc.Mat, optional
+        Return matrix, by default None
+    """
+        # TODO: make this work with MPI by using a scatter to obtain the
+        # off-process values of L. Only the diagonal block is set here.
+    comm = L.getComm()
+    (n,N) = L.getSizes()
+    L_l = L.getArray() # local vector (n)
+    L_l_idx_nnz = L_l.nonzero()[0] # index of non-zero elements
+    L_l_nnz = L_l_idx_nnz.size
+    A = result
+    if A==None: # create A and pre-allocate
+        A = PETSc.Mat()
+        A.create(comm)
+        A.setSizes(((n,N),(n,N)))
+        A.setFromOptions()
+        A_nnz = np.zeros(n,dtype='int32')
+        A_nnz[L_l_idx_nnz] = L_l_nnz
+        A.setPreallocationNNZ(A_nnz)
+    rows = A.getOwnershipRange()
+    rows_idx_l2g = np.arange(rows[0],rows[1],dtype='int32')
+    A.setValues(rows_idx_l2g[L_l_idx_nnz],
+                     L_l_idx_nnz.astype('int32'),
+                     np.kron(L_l[L_l_idx_nnz],L_l[L_l_idx_nnz]))
+    A.assemblyBegin()
+    A.assemblyEnd()
+    return A
+
 def convert_scipy_to_PETSc(A,comm=None):
     """
     Convert from scipy sparse to PETSc sparse.
