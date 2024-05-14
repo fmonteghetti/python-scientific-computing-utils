@@ -7,7 +7,6 @@ import numpy as np
 import scipy.sparse as sp
 from petsc4py import PETSc
 
-
 def kron_vector(L,result=None):
     """Compute the matrix A_{ij} = L_i*L_j, where L is a vector. 
 
@@ -17,27 +16,36 @@ def kron_vector(L,result=None):
     result : petsc4py.PETSc.Mat, optional
         Return matrix, by default None
     """
-        # TODO: make this work with MPI by using a scatter to obtain the
-        # off-process values of L. Only the diagonal block is set here.
     comm = L.getComm()
     (n,N) = L.getSizes()
-    L_l = L.getArray() # local vector (n)
-    L_l_idx_nnz = L_l.nonzero()[0] # index of non-zero elements
-    L_l_nnz = L_l_idx_nnz.size
+        # Local values of L
+    L_l = L.getArray() 
+    L_l_idx_nnz = L_l.nonzero()[0] 
+        # Scatter all values of L to all process
+        # TODO: use symmetry of A to reduce scattered data
+    L_g_vec = PETSc.Vec().createSeq(L.size)
+    idx = PETSc.IS().createGeneral(np.arange(0,L.size,dtype=PETSc.IntType))
+    sct = PETSc.Scatter().create(L,idx,L_g_vec,idx)
+    sct.scatter(L,L_g_vec) # Lg_vec[:] = L[:]
+        # Local vector holding all the values of L
+    L_g = L_g_vec.getArray()
+    L_g_idx_nnz = L_g.nonzero()[0].astype(PETSc.IntType)
+    L_g_nnz = L_g_idx_nnz.size
     A = result
     if A==None: # create A and pre-allocate
         A = PETSc.Mat()
         A.create(comm)
         A.setSizes(((n,N),(n,N)))
         A.setFromOptions()
-        A_nnz = np.zeros(n,dtype='int32')
-        A_nnz[L_l_idx_nnz] = L_l_nnz
+        A_nnz = np.zeros(n,dtype=PETSc.IntType)
+        A_nnz[L_l_idx_nnz] = L_g_nnz
         A.setPreallocationNNZ(A_nnz)
     rows = A.getOwnershipRange()
-    rows_idx_l2g = np.arange(rows[0],rows[1],dtype='int32')
-    A.setValues(rows_idx_l2g[L_l_idx_nnz],
-                rows_idx_l2g[L_l_idx_nnz],
-                np.kron(L_l[L_l_idx_nnz],L_l[L_l_idx_nnz]))
+    idx_l2g = np.arange(rows[0],rows[1],dtype=PETSc.IntType)
+    val=np.kron(L_l[L_l_idx_nnz],L_g[L_g_idx_nnz])
+    A.setValues(idx_l2g[L_l_idx_nnz],
+                L_g_idx_nnz,
+                val)
     A.assemblyBegin()
     A.assemblyEnd()
     return A
