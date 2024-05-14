@@ -45,7 +45,7 @@ def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None,
     """ Assemble bilinear form defined by a double integral over facets 
     involving a kernel with separated variables:
 
-        ∫_{ΓxΓ} k(x)*k(y)*u(x)*v(y) ds(x) ds(y),
+        a(u,v) = ∫_{ΓxΓ} k(x)*k(y)*u(x)*v(y) ds(x) ds(y),
     
     where u is the test function and v the trial function.
 
