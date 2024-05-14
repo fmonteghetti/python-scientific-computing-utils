@@ -90,10 +90,8 @@ def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None,
         A_nnz[Lval_nnz_idx] = Lval_nnz_idx.size
         A.setPreallocationNNZ(A_nnz.astype('int32'))
         result = A
-    Lval = np.atleast_2d(Lval[Lval_nnz_idx]).transpose() # column vector
-    Lval = Lval @ Lval.transpose()
     result.setValues(Lval_nnz_idx.astype('int32'),Lval_nnz_idx.astype('int32'),
-                                                                Lval.flatten())
+                                np.kron(Lval[Lval_nnz_idx],Lval[Lval_nnz_idx]))
     result.assemblyBegin()
     result.assemblyEnd()
     return result
