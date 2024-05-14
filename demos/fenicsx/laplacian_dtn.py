@@ -41,8 +41,7 @@ from scientific_computing_utils import PETSc_utils
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 
-def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None,
-                                                           comm=MPI.COMM_WORLD):
+def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None):
     """ Assemble bilinear form defined by a double integral over facets 
     involving a kernel with separated variables:
 
@@ -61,8 +60,6 @@ def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None,
     dmesh: scientific_computing_utils.fenicsx_utils.DolfinxMesh
     result: petsc4py.PETSc.Mat
         Optional return matrix (default: None).
-    comm: mpi4py.MPI.Intracom
-        MPI communicator.
 
     Returns
     -------
@@ -181,7 +178,7 @@ if DtN_order>0:
             (alpha,k_expr) = DtN_Laplace_circle(n,m)
             k_fun.interpolate(k_expr)
             A_tmp = assemble_matrix_double_facet_integral(k_fun,Gamma_DtN_tags,
-                                                   dmesh,result=A_tmp,comm=comm)
+                                                   dmesh,result=A_tmp)
             A.axpy(-alpha,A_tmp)
 
     # Solve
@@ -205,8 +202,8 @@ L2_error = dolfinx.fem.form(L2_error)
 L2_error = dolfinx.fem.assemble_scalar(L2_error)
 L2_error = np.sqrt(comm.allreduce(L2_error, op=MPI.SUM))
 
-if comm.rank == 0:
-    print(f"DoF : {V.tabulate_dof_coordinates().shape[0]}")
+if comm.rank==0:
+    print(f"DoF : {uh.vector.size}")
     print(f"Error_L2 : {L2_error:.2e}")
     # Export uh to a single XDMF file (currently supports only one function)
 with dolfinx.io.XDMFFile(mesh.comm, "shared/demo_laplace_dtn.xdmf", "w") as file:
