@@ -36,8 +36,8 @@ def kron_vector(L,result=None):
     rows = A.getOwnershipRange()
     rows_idx_l2g = np.arange(rows[0],rows[1],dtype='int32')
     A.setValues(rows_idx_l2g[L_l_idx_nnz],
-                     L_l_idx_nnz.astype('int32'),
-                     np.kron(L_l[L_l_idx_nnz],L_l[L_l_idx_nnz]))
+                rows_idx_l2g[L_l_idx_nnz],
+                np.kron(L_l[L_l_idx_nnz],L_l[L_l_idx_nnz]))
     A.assemblyBegin()
     A.assemblyEnd()
     return A
