@@ -67,11 +67,11 @@ def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None):
         Matrix of the bilinear form.
     """
     V = k.function_space
-    v = ufl.TrialFunction(V)
+    v = ufl.TestFunction(V)
         # Assemble linear form ∫_{Γ} k(x)*v(x) ds(x)
     l = list()
     for tag in Gamma_tags:
-        l.append(k * v * dmesh.ds(tag))
+        l.append(ufl.inner(k,v) * dmesh.ds(tag))
     l = sum(l)
     L = dolfinx.fem.petsc.assemble_vector(dolfinx.fem.form(l))
     L.assemble()
