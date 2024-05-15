@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Creation of PETSc matrix in parallel.
+Elementary creation and manipulation of PETSc vectors and matrix in parallel.
 
 The script can be run on one or multiple threads:
     python ./MPI-test.py (one thread)
@@ -48,10 +48,22 @@ print(f"[{comm.rank}] nz_allocated/nz_unneeded: "+ \
 comm.Barrier()
 A.view()
 
-# Create a distributed vector
+def print_vector(v):
+    """ Print some basic info about a petsc4py.PETSc.Vec """
+    (n,N) = L.getSizes()
+    rows = L.getOwnershipRange()
+    print(f"[{comm.rank}] I own {n} values in [{rows[0]},{rows[1]})")
+    print(f"[{comm.rank}] Owned values: {L.getArray()}")
+    with L.localForm() as L_loc: # 'local ghosted representation' of L
+        print(f"[{comm.rank}] I have {L_loc.size-n} ghost values: {L_loc[n:L_loc.size]}") 
+
+# Create a distributed vector without ghost values
 N = 5
 L = PETSc.Vec()
 L.create(comm)
+# L is a vector of length N.
+# Each MPI process stores a vector of size n,
+# where n is determined by PETSc
 L.setSizes((PETSc.DECIDE,N))
 L.setFromOptions()
 rows=L.getOwnershipRange()
@@ -60,3 +72,38 @@ L.setValues(rows_idx,rows_idx)
 L.assemblyBegin()
 L.assemblyEnd()
 L.view()
+print_vector(L)
+
+# Create a distributed vector with ghost values
+N = 6
+ghost_idx = [1,2] # global index of ghost values
+L = PETSc.Vec()
+L.createGhost(ghost_idx,(PETSc.DECIDE,N))
+# L is a vector of length N.
+# Each MPI process stores a vector of size n, where n is determined by PETSc,
+# as well as a copy of the ghost values.
+L.setFromOptions()
+L.assemblyBegin()
+L.assemblyEnd()
+
+# The sequence below illustrates ghost values update and synchronization
+print_vector(L)
+print(f"[{comm.rank}] I am modifying my copy of the first ghost value.")
+with L.localForm() as L_loc:
+    (n,N) = L.getSizes()
+    L_loc[n] = comm.rank+1 # Updating first ghost value
+print_vector(L)
+comm.Barrier()
+if comm.rank==0:
+    print(f"Updating all owned values.")
+    # update the values owned by each process using all copies of ghost values
+L.ghostUpdate(PETSc.InsertMode.ADD_VALUES, PETSc.ScatterMode.REVERSE)
+comm.Barrier()
+print_vector(L)
+comm.Barrier()
+if comm.rank==0:
+    print(f"Updating all copies of ghost values.")
+    # update all copies of ghost values
+L.ghostUpdate(PETSc.InsertMode.INSERT_VALUES, PETSc.ScatterMode.FORWARD)
+comm.Barrier()
+print_vector(L)
