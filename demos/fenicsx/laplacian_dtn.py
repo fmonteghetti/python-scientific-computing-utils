@@ -75,6 +75,8 @@ def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None):
     l = sum(l)
     L = dolfinx.fem.petsc.assemble_vector(dolfinx.fem.form(l))
     L.assemble()
+    L.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, 
+                  mode=PETSc.ScatterMode.REVERSE)
         # Compute A_ij = L_i * L_j
     result = PETSc_utils.kron_vector(L,result=result)
     return result
