@@ -41,46 +41,6 @@ from scientific_computing_utils import PETSc_utils
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 
-def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None):
-    """ Assemble bilinear form defined by a double integral over facets 
-    involving a kernel with separated variables:
-
-        a(u,v) = ∫_{ΓxΓ} k(x)*k(y)*u(x)*v(y) ds(x) ds(y),
-    
-    where u is the test function and v the trial function.
-
-    Integrands k, u, and v are assumed to belong to the same function space.
-    
-    Parameters
-    ----------
-    k : dolfinx.fem.function.Function
-        Integral kernel.
-    Gamma_tags: list(int)
-        Tags defining boundary Gamma.
-    dmesh: scientific_computing_utils.fenicsx_utils.DolfinxMesh
-    result: petsc4py.PETSc.Mat
-        Optional return matrix (default: None).
-
-    Returns
-    -------
-    A: petsc4py.PETSc.Mat
-        Matrix of the bilinear form.
-    """
-    V = k.function_space
-    v = ufl.TestFunction(V)
-        # Assemble linear form ∫_{Γ} k(x)*v(x) ds(x)
-    l = list()
-    for tag in Gamma_tags:
-        l.append(ufl.inner(k,v) * dmesh.ds(tag))
-    l = sum(l)
-    L = dolfinx.fem.petsc.assemble_vector(dolfinx.fem.form(l))
-    L.assemble()
-    L.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, 
-                  mode=PETSc.ScatterMode.REVERSE)
-        # Compute A_ij = L_i * L_j
-    result = PETSc_utils.kron_vector(L,result=result)
-    return result
-
 def DtN_Laplace_circle(n,m):
     """ Expression of the DtN kernel for Laplace's equation on a circle. The DtN
     kernel is written as:
@@ -179,8 +139,8 @@ if DtN_order>0:
         for m in [0,1]:
             (alpha,k_expr) = DtN_Laplace_circle(n,m)
             k_fun.interpolate(k_expr)
-            A_tmp = assemble_matrix_double_facet_integral(k_fun,Gamma_DtN_tags,
-                                                   dmesh,result=A_tmp)
+            A_tmp = fenicsx_utils.assemble_matrix_double_facet_integral(k_fun,
+                                            Gamma_DtN_tags,dmesh,result=A_tmp)
             A.axpy(-alpha,A_tmp)
 
     # Solve
@@ -194,7 +154,7 @@ uh.x.scatter_forward()
 
 comm.Barrier()
 if comm.rank ==0:
-    print(f"Elapsed time (direct problem): {1e-9*(time.process_time_ns()-t0):1.2g}s")
+    print(f"Elapsed time: {1e-9*(time.process_time_ns()-t0):1.2g}s")
 
 # Error
 uEx = dolfinx.fem.Function(V)

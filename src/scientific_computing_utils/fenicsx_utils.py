@@ -7,7 +7,7 @@
 from mpi4py import MPI
 import dolfinx.plot
 import ufl
-from scientific_computing_utils import gmsh_utils, gmsh_utils_fenicsx
+from scientific_computing_utils import PETSc_utils, gmsh_utils, gmsh_utils_fenicsx
 import pyvista as pv
 from petsc4py import PETSc
 
@@ -154,3 +154,43 @@ def project(u, V, bcs=[],petsc_options=dict()):
     problem = dolfinx.fem.petsc.LinearProblem(a, l,bcs=bcs, 
                           petsc_options=petsc_options)
     return problem.solve()
+
+def assemble_matrix_double_facet_integral(k,Gamma_tags,dmesh,result=None):
+    """ Assemble bilinear form defined by a double integral over facets 
+    involving a kernel with separated variables:
+
+        a(u,v) = ∫_{ΓxΓ} k(x)*k(y)*u(x)*v(y) ds(x) ds(y),
+    
+    where u is the test function and v the trial function.
+
+    Integrands k, u, and v are assumed to belong to the same function space.
+    
+    Parameters
+    ----------
+    k : dolfinx.fem.function.Function
+        Integral kernel.
+    Gamma_tags: list(int)
+        Tags defining boundary Gamma.
+    dmesh: scientific_computing_utils.fenicsx_utils.DolfinxMesh
+    result: petsc4py.PETSc.Mat
+        Optional return matrix (default: None).
+
+    Returns
+    -------
+    A: petsc4py.PETSc.Mat
+        Matrix of the bilinear form.
+    """
+    V = k.function_space
+    v = ufl.TestFunction(V)
+        # Assemble linear form ∫_{Γ} k(x)*v(x) ds(x)
+    l = list()
+    for tag in Gamma_tags:
+        l.append(ufl.inner(k,v) * dmesh.ds(tag))
+    l = sum(l)
+    L = dolfinx.fem.petsc.assemble_vector(dolfinx.fem.form(l))
+    L.assemble()
+    L.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, 
+                  mode=PETSc.ScatterMode.REVERSE)
+        # Compute A_ij = L_i * L_j
+    result = PETSc_utils.kron_vector(L,result=result)
+    return result
