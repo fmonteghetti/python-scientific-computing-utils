@@ -42,12 +42,13 @@ def kron_vector(L,result=None):
         o_nnz = np.zeros(n,dtype=PETSc.IntType)
         o_nnz[L_l_idx_nnz] = L_g_nnz - L_l_nnz
         A.setPreallocationNNZ((d_nnz,o_nnz))
-    rows = A.getOwnershipRange()
-    idx_l2g = np.arange(rows[0],rows[1],dtype=PETSc.IntType)
-    val=np.kron(L_l[L_l_idx_nnz],L_g[L_g_idx_nnz])
-    A.setValues(idx_l2g[L_l_idx_nnz],
-                L_g_idx_nnz,
-                val)
+    if L_l_nnz!=0: # non-null contribution to L 
+        rows = A.getOwnershipRange()
+        idx_l2g = np.arange(rows[0],rows[1],dtype=PETSc.IntType)
+        val=np.kron(L_l[L_l_idx_nnz],L_g[L_g_idx_nnz])
+        A.setValues(idx_l2g[L_l_idx_nnz],
+                    L_g_idx_nnz,
+                    val)
     A.assemblyBegin()
     A.assemblyEnd()
     return A
