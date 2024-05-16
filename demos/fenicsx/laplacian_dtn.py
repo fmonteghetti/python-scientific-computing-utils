@@ -2,26 +2,19 @@
 # -*- coding: utf-8 -*-
 """
 Solve the exterior problem for the Dirichlet Laplacian in dolfinx using
-the Dirichlet-to-Neumann map.
+the Dirichlet-to-Neumann map on a circle.
 
 The problem is
     - Delta(u) = f in Omega
     u = uD on Gamma
     du/dn = DtN[u] on B_R (circlle of radius R),
 
-where the DtN is given by (Givoli 1992, Numerical Methods for Problem in Infinite Domains, (49)):
+where the DtN is defined by a boundary integral
 
-    M_R(u)(x) = Σ_n ∫_{B_R} m_n(x,y)u(y)ds(y), (x∈B_R)
+    DtN[u](x) = ∫_{B_R} k(x,y)u(y)ds(y) (x∈B_R),
 
-with kernel
-    m_n(x,y) = - n/(π*R^2) * cos(n*(theta(x)-theta(y))).
-
-The script can be run on one or multiple threads:
-    python ./MPI-test.py (one thread)
-    mpirun -n N ./MPI-test.py (N threads).
-The latter can be executed from the ipython prompt using:
-    ! mpirun -n N ./MPI-test.py.
-
+with kernel defined by a series (Givoli 1992, Numerical Methods for Problem in
+Infinite Domains, (49)).
 """
 #%%
 from mpi4py import MPI
@@ -42,10 +35,16 @@ import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 
 def DtN_Laplace_circle(n,m):
-    """ Expression of the DtN kernel for Laplace's equation on a circle. The DtN
-    kernel is written as:
+    """ Expression of the DtN kernel for Laplace's equation on a circle. 
+    
+    The kernel is written as: (Givoli 1992, Numerical Methods for Problem in
+    Infinite Domains, (49))
    
-        k(x,y) = Σ_n Σ_m ɑ_{n,m} * k_{n,m}(x) * k_{n,m}(y).
+        k(x,y) = Σ_n Σ_m ɑ_{n} * k_{n,m}(x) * k_{n,m}(y),
+
+    where ɑ_{n} = - n/(π*R^2), 
+    
+        k_{n,0}(x) =  cos(n*(θ(x))), and  k_{n,1}(x) =  sin(n*(θ(x))).
 
     Parameters
     ----------
