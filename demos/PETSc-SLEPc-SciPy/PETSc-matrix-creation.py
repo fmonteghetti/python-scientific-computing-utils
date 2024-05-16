@@ -29,33 +29,38 @@ A.setFromOptions()
     # Pre-allocate a number of non-zero element per row.
     # When n is PETSc.DECIDE, nz must be a scalar
     # Otherwise, nnz can be an integer vector of length n.
-nnz = 2
-A.setPreallocationNNZ(nnz)
+    # When running in parallel, diagonal and off-process blocks are
+    # pre-allocated separately.
+d_nnz = 2 # nnz element per row of diagonal (n,m) submatrix
+o_nnz = 1 # nnz element per row of off-process (n,M-m) submatrix
+A.setPreallocationNNZ((d_nnz,o_nnz))
     # Rows owned by MPI process
     # When n is PETSc.DECIDE, this must be called after setPreallocationNNZ()
 rows = A.getOwnershipRange()
     # Set Values using global numering
-A.setValues(rows[0],0,comm.rank,addv=False)
-A.setValues(rows[0],1,comm.rank,addv=False)
+A.setValues(rows[0],rows[0],comm.rank,addv=False) 
 A.assemblyBegin()
 A.assemblyEnd()
 print(f"[{comm.rank}] A local and global sizes: {A.getSizes()[0]}")
 print(f"[{comm.rank}] Rows owned: {A.getOwnershipRange()}")
 info = A.getInfo()
-print(f"[{comm.rank}] nz_allocated/nz_unneeded: "+ \
-        f"{info['nz_allocated']}/{info['nz_unneeded']}, "+\
-        f"mallocs: {info['mallocs']}")
+print(f"[{comm.rank}] Memory allocation:\n\tnz_allocated/nz_unneeded: "+ \
+        f"{info['nz_allocated']}/{info['nz_unneeded']},\n\t"+\
+        f"additional (costly) mallocs: {info['mallocs']}")
 comm.Barrier()
 A.view()
 
-def print_vector(v):
+def print_vector(v,has_ghost_values=False):
     """ Print some basic info about a petsc4py.PETSc.Vec """
     (n,N) = L.getSizes()
     rows = L.getOwnershipRange()
     print(f"[{comm.rank}] I own {n} values in [{rows[0]},{rows[1]})")
     print(f"[{comm.rank}] Owned values: {L.getArray()}")
-    with L.localForm() as L_loc: # 'local ghosted representation' of L
-        print(f"[{comm.rank}] I have {L_loc.size-n} ghost values: {L_loc[n:L_loc.size]}") 
+    if has_ghost_values:
+        with L.localForm() as L_loc:
+            # L_loc = 'local ghosted representation' of L
+            n_ghost = L_loc.size-n
+            print(f"[{comm.rank}] I have {n_ghost} ghost values: {L_loc[n:-1]}") 
 
 # Create a distributed vector without ghost values
 N = 5
