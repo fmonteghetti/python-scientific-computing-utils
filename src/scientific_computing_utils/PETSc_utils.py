@@ -20,9 +20,9 @@ def kron_vector(L,result=None):
     (n,N) = L.getSizes()
         # Local values of L
     L_l = L.getArray() 
-    L_l_idx_nnz = L_l.nonzero()[0] 
+    L_l_idx_nnz = L_l.nonzero()[0]
+    L_l_nnz = L_l_idx_nnz.size 
         # Scatter all values of L to all process
-        # TODO: use symmetry of A to reduce scattered data
     L_g_vec = PETSc.Vec().createSeq(L.size)
     idx = PETSc.IS().createGeneral(np.arange(0,L.size,dtype=PETSc.IntType))
     sct = PETSc.Scatter().create(L,idx,L_g_vec,idx)
@@ -37,9 +37,11 @@ def kron_vector(L,result=None):
         A.create(comm)
         A.setSizes(((n,N),(n,N)))
         A.setFromOptions()
-        A_nnz = np.zeros(n,dtype=PETSc.IntType)
-        A_nnz[L_l_idx_nnz] = L_g_nnz
-        A.setPreallocationNNZ(A_nnz)
+        d_nnz = np.zeros(n,dtype=PETSc.IntType)
+        d_nnz[L_l_idx_nnz] = L_l_nnz
+        o_nnz = np.zeros(n,dtype=PETSc.IntType)
+        o_nnz[L_l_idx_nnz] = L_g_nnz - L_l_nnz
+        A.setPreallocationNNZ((d_nnz,o_nnz))
     rows = A.getOwnershipRange()
     idx_l2g = np.arange(rows[0],rows[1],dtype=PETSc.IntType)
     val=np.kron(L_l[L_l_idx_nnz],L_g[L_g_idx_nnz])

@@ -100,3 +100,7 @@ for (L,A_ex) in test_cases:
         print(f"Elapsed time (re-use): {1e-9*(time.process_time_ns()-t0):1.2g}s")
     error = _compute_error(A,A_ex)
     print(f"[{comm.rank}] Error={error}")
+# Print memory allocation info
+info = A.getInfo()
+if comm.rank==0:
+    print(f"[{comm.rank}] nz_allocated/nz_unneeded/mallocs: {info['nz_allocated']}/{info['nz_unneeded']}/{info['mallocs']}.")
