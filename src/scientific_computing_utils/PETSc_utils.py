@@ -24,7 +24,7 @@ def kron_vector(L,result=None):
     L_l_nnz = L_l_idx_nnz.size 
         # Scatter all values of L to all process
     L_g_vec = PETSc.Vec().createSeq(L.size)
-    idx = PETSc.IS().createGeneral(np.arange(0,L.size,dtype=PETSc.IntType))
+    idx = PETSc.IS().createStride(N,first=0,step=1,comm=comm)
     sct = PETSc.Scatter().create(L,idx,L_g_vec,idx)
     sct.scatter(L,L_g_vec) # Lg_vec[:] = L[:]
         # Local vector holding all the values of L
