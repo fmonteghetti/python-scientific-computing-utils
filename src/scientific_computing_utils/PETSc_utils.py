@@ -19,7 +19,7 @@ def kron_vector(L,result=None):
     comm = L.getComm()
     (n,N) = L.getSizes()
         # Local values of L
-    L_l = L.getArray() 
+    L_l = L.getArray(readonly=True)
     L_l_idx_nnz = L_l.nonzero()[0].astype(PETSc.IntType)
     L_l_nnz = L_l_idx_nnz.size 
         # Scatter all values of L to all process
@@ -28,7 +28,7 @@ def kron_vector(L,result=None):
     sct = PETSc.Scatter().create(L,idx,L_g_vec,idx)
     sct.scatter(L,L_g_vec) # Lg_vec[:] = L[:]
         # Local vector holding all the values of L
-    L_g = L_g_vec.getArray()
+    L_g = L_g_vec.getArray(readonly=True)
     L_g_idx_nnz = L_g.nonzero()[0].astype(PETSc.IntType)
     L_g_nnz = L_g_idx_nnz.size
     A = result
