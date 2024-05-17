@@ -20,7 +20,7 @@ def kron_vector(L,result=None):
     (n,N) = L.getSizes()
         # Local values of L
     L_l = L.getArray() 
-    L_l_idx_nnz = L_l.nonzero()[0]
+    L_l_idx_nnz = L_l.nonzero()[0].astype(PETSc.IntType)
     L_l_nnz = L_l_idx_nnz.size 
         # Scatter all values of L to all process
     L_g_vec = PETSc.Vec().createSeq(L.size)
@@ -44,11 +44,10 @@ def kron_vector(L,result=None):
         A.setPreallocationNNZ((d_nnz,o_nnz))
     if L_l_nnz!=0: # non-null contribution to L 
         rows = A.getOwnershipRange()
-        idx_l2g = np.arange(rows[0],rows[1],dtype=PETSc.IntType)
-        val=np.kron(L_l[L_l_idx_nnz],L_g[L_g_idx_nnz])
-        A.setValues(idx_l2g[L_l_idx_nnz],
-                    L_g_idx_nnz,
-                    val)
+        I,J = L_l_idx_nnz.view(), L_g_idx_nnz.view()
+        I += rows[0] # local to global
+        V=np.kron(L_g[I],L_g[J])
+        A.setValues(I,J,V)
     A.assemblyBegin()
     A.assemblyEnd()
     return A
