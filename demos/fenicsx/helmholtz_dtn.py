@@ -25,18 +25,13 @@ where
 from mpi4py import MPI
 comm = MPI.COMM_WORLD # dolfinx, petsc, and slepc use mpi communicators
 from petsc4py import PETSc
-from slepc4py import SLEPc
-import pyvista as pv
 import numpy as np
 from scipy.special import h1vp, h2vp
 import time
 import dolfinx
 import ufl
 from scientific_computing_utils import gmsh_utils
-from scientific_computing_utils import gmsh_utils_fenicsx
 from scientific_computing_utils import fenicsx_utils
-from scientific_computing_utils import SLEPc_utils
-from scientific_computing_utils import PETSc_utils
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 
@@ -94,8 +89,8 @@ geofile=os.path.join(DIR_MESH,"Annulus-2D.geo")
 Gamma_name = ['Gamma-0'] 
 DtN_name = ['Gamma-1']
 Omega_name = ['Omega'] 
-DtN_order = 5   # n>=1, Sommerfeld radiation condition if 0
-ui_n = 5 # Orthoradial order of incident field (n>=1)
+DtN_order = 5   # n>=0, Sommerfeld radiation condition if -1
+ui_n = 5 # Orthoradial order of incident field (n>=0)
 k = 4 # wavenumber (k>0)
     # Boundary data and analytical solution
         # Incident field
@@ -139,13 +134,12 @@ l = ufl.inner(f, v) * dmesh.dx
 ui = dolfinx.fem.Function(V)
 ui.interpolate(ui_expr)
 ui_dn = ufl.dot(nvec,ufl.grad(ui))
-if DtN_order==0:
+for tag in Gamma_DtN_tags:
+    l += ufl.inner(ui_dn, v) * dmesh.ds(tag)
+if DtN_order==-1: # Sommerfeld condition
     for tag in Gamma_DtN_tags:
-        a += ufl.inner(-1j*k*u,v) * dmesh.ds(tag)  
-        l += ufl.inner(ui_dn-1j*k*ui, v) * dmesh.ds(tag)
-else:
-    for tag in Gamma_DtN_tags:
-        l += ufl.inner(ui_dn, v) * dmesh.ds(tag)
+        a += ufl.inner(-1j*k*u, v) * dmesh.ds(tag)  
+        l += ufl.inner(-1j*k*ui, v) * dmesh.ds(tag)
 a = dolfinx.fem.form(a)
 A = dolfinx.fem.petsc.assemble_matrix(a, bcs)
 A.assemble()
@@ -157,7 +151,7 @@ dolfinx.fem.petsc.apply_lifting(L, [a], [bcs])
 L.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
 dolfinx.fem.petsc.set_bc(L, bcs)
     # Assemble DtN contribution to A and L
-if DtN_order>0:
+if DtN_order>=0:
     k_fun = dolfinx.fem.Function(V)
     A_tmp = None
     for n in np.arange(0,DtN_order+1):
@@ -174,7 +168,8 @@ if DtN_order>0:
                 form = ufl.inner(k_fun, v) * dmesh.ds(tag)
                 Ltmp = dolfinx.fem.petsc.assemble_vector(dolfinx.fem.form(form))
                 Ltmp.assemble()
-                Ltmp.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
+                Ltmp.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, 
+                                 mode=PETSc.ScatterMode.REVERSE)
                 form = k_fun*ui*dmesh.ds(tag)
                 beta = dolfinx.fem.assemble_scalar(dolfinx.fem.form(form))
                 beta = comm.allreduce(beta,op=MPI.SUM)
