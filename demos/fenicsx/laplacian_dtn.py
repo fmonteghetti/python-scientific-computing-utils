@@ -7,7 +7,7 @@ the Dirichlet-to-Neumann map on a circle.
 The problem is
     - Delta(u) = f in Omega
     u = uD on Gamma
-    du/dn = DtN[u] on B_R (circlle of radius R),
+    du/dn = DtN[u] on B_R (circle of radius R),
 
 where the DtN is defined by a boundary integral
 
@@ -38,7 +38,7 @@ def DtN_Laplace_circle(n,m):
     """ Expression of the DtN kernel for Laplace's equation on a circle. 
     
     The kernel is written as: (Givoli 1992, Numerical Methods for Problem in
-    Infinite Domains, (49))
+    Infinite Domains, (7.49))
    
         k(x,y) = Σ_n Σ_m ɑ_{n} * k_{n,m}(x) * k_{n,m}(y),
 
