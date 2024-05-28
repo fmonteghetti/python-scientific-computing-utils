@@ -15,7 +15,7 @@ import numpy as np
 ##############################################################################
 
 def generate_mesh_cli(geofile,gmshfile,dim,order=1,
-                           gmshformat=2,meshing=-1,recombination=-1,
+                           gmshformat="auto",meshing=-1,recombination=-1,
                            refinement=0,log=0,verbosity=3,flexible_transfinite=False,
                            binary=False,parameters=dict(),save_and_exit=False):
     """
@@ -37,8 +37,8 @@ def generate_mesh_cli(geofile,gmshfile,dim,order=1,
         Recombination algorithm. (Mesh.RecombinationAlgorithm)
     refinement : int, optional
         Number of refinment steps. The default is 1.
-    gmshformat : int, optional
-        Msh format. The default is 2.
+    gmshformat : str, optional
+        Msh format. The default is "auto".
     log : int, optional
         Write log to a .log file. The default is 0.
     verbosity : int, optional
@@ -71,7 +71,7 @@ def generate_mesh_cli(geofile,gmshfile,dim,order=1,
     print(f"Generating mesh '{gmshfile}' from '{geofile}'...")
     arg=list() # command line argument
     arg.append(f"-order {order}")
-    arg.append(f"-format msh{gmshformat}")
+    arg.append(f"-format {gmshformat}")
     arg.append(f"-v {verbosity}")
     command=list() # command string
     if binary:
