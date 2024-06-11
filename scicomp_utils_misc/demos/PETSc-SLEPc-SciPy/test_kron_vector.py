@@ -16,7 +16,7 @@ from mpi4py import MPI
 comm = MPI.COMM_WORLD
 from petsc4py import PETSc
 import numpy as np
-from scientific_computing_utils import PETSc_utils
+from scicomp_utils_misc import PETSc_utils
 
 def _get_integer_test(N):
     """ Create a distributed integer vector L and the matrix L*L^T."""

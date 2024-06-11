@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "scicomp_utils_mesh"
+name = "scicomp_utils_misc"
 dynamic = ["version"]
-description = 'Collection of utility modules to handle meshes in python.'
+description = 'Collection of miscellaneous utility modules.'
 readme = "README.md"
 requires-python = ">=3.9"
 license = "GPL-3.0-only"
@@ -17,12 +17,12 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
 ]
-dependencies = ['gmsh','numpy','meshio']
+dependencies = ['numpy','scipy','PIL','petsc4py','mpi4py','slepc4py']
 
 [project.urls]
-Documentation = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_mesh#readme"
+Documentation = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_misc#readme"
 Issues = "https://github.com/fmonteghetti/python-scientific-computing-utils/issues"
-Source = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_mesh"
+Source = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_misc"
 
 [tool.hatch]
-version.path = "src/scicomp_utils_mesh/__init__.py"
+version.path = "src/scicomp_utils_misc/__init__.py"

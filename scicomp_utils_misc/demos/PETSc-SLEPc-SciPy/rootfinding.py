@@ -6,7 +6,7 @@ This script demonstrates root finding.
 
 import numpy as np
 import scipy.special
-from scientific_computing_utils import scipy_utils
+from scicomp_utils_misc import scipy_utils
 import matplotlib.pyplot as plt
         
 

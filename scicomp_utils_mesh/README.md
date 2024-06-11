@@ -15,7 +15,7 @@ demonstrating the modules are available in the `demos` folder.
 # Installation
 
 ```console
-pip install "scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils#subdirectory=scicomp_utils_mesh"
+pip install "scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_mesh"
 ```
 
 # Development
@@ -26,9 +26,9 @@ Install the package in editable mode:
 
 ```console
     # in a virtual environment
-pip install -e "scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils#subdirectory=scicomp_utils_mesh"
+pip install -e "scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_mesh"
     # in a conda environment
-pip install --no-build-isolation --no-deps -e "scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils#subdirectory=scicomp_utils_mesh"
+pip install --no-build-isolation --no-deps -e "scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_mesh"
 ```
 
 ## Docker via devcontainers (Visual Studio Code)

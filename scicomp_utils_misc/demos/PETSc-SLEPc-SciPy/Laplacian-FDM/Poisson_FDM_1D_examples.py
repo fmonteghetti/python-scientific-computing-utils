@@ -26,7 +26,7 @@ from petsc4py import PETSc
 from slepc4py import SLEPc
 
 import Poisson_FDM_1D as PoissonFDM
-from scientific_computing_utils import PETSc_utils
+from scicomp_utils_misc import PETSc_utils
 
 import matplotlib.pyplot as plt
 #%% Common inputs

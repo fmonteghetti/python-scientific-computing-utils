@@ -6,7 +6,7 @@ differential equations (PDE). It is mostly useful for validation purposes.
 """
 
 import numpy as np
-from scientific_computing_utils import scipy_utils
+from scicomp_utils_misc import scipy_utils
 
 class Laplace_spectrum:
     """ Spectrum of Laplace operator u -> -div(grad(u))."""
