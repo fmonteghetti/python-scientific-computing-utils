@@ -1,9 +1,5 @@
 # python-scientific-computing-utils
 
-TODO: update description to description each package.
-TODO: one .devcontainer per package
-
-
 **Table of Contents**
 
 - [Description](#description)

@@ -4,7 +4,7 @@
 Examples using functions of meshio_utils.
 
 """
-from scientific_computing_utils import meshio_utils
+from  scicomp_utils_mesh import meshio_utils
 
 #%% Convert gmsh format to XDMF (2D mesh)
     # High-order meshes are supported

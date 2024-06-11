@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "scicomp_utils_mesh"
+dynamic = ["version"]
+description = 'Collection of utility modules to handle meshes in python.'
+readme = "README.md"
+requires-python = ">=3.9"
+license = "GPL-3.0-only"
+keywords = []
+authors = [
+  { name = "Florian Monteghetti", email = "f.monteghetti@gmail.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+]
+dependencies = ['gmsh','numpy','meshio']
+
+[project.urls]
+Documentation = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_mesh#readme"
+Issues = "https://github.com/fmonteghetti/python-scientific-computing-utils/issues"
+Source = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_mesh"
+
+[tool.hatch]
+version.path = "src/scicomp_utils_mesh/__init__.py"
