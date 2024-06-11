@@ -8,7 +8,7 @@ import numpy as np
 import fenics as fe
 import multiphenics as mpfe
 from petsc4py import PETSc
-from scientific_computing_utils import psl_utils, PETSc_utils
+from scicomp_utils_misc import psl_utils, PETSc_utils
 import time
 
 def get_function(y,sol_idx,sol_name,W):

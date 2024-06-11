@@ -22,12 +22,12 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import fenics as fe
-from scientific_computing_utils import gmsh_utils
-from scientific_computing_utils import fenics_utils
-from scientific_computing_utils import meshio_utils
+from scicomp_utils_mesh import gmsh_utils
+from scicomp_utils_dolfin import fenics_utils
+from scicomp_utils_mesh import meshio_utils
 from slepc4py import SLEPc
-from scientific_computing_utils import SLEPc_utils
-from scientific_computing_utils import PDE_exact
+from scicomp_utils_misc import SLEPc_utils
+from scicomp_utils_misc import PDE_exact
 import os
 
 # Load mesh

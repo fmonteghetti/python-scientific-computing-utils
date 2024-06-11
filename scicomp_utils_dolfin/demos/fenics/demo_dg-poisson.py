@@ -25,7 +25,7 @@ document Laplace-equation-discretization.lyx.
 import fenics as fe
 from fenics import dot, grad, jump, avg
 import matplotlib.pyplot as plt
-from scientific_computing_utils import fenics_utils
+from scicomp_utils_dolfin import fenics_utils
 import numpy as np
 
     # FIXME: Make mesh ghosted

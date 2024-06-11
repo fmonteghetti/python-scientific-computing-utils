@@ -15,10 +15,10 @@ The PDE is a Poisson equation with weight w(x).
 import numpy as np
 import matplotlib.pyplot as plt
 import fenics as fe
-from scientific_computing_utils import gmsh_utils
-from scientific_computing_utils import gmsh_utils_fenics
-from scientific_computing_utils import fenics_utils
-from scientific_computing_utils import meshio_utils
+from scicomp_utils_mesh import gmsh_utils
+from scicomp_utils_dolfin import gmsh_utils_fenics
+from scicomp_utils_dolfin import fenics_utils
+from scicomp_utils_mesh import meshio_utils
 import os
 #%% Generate mesh using gmsh (2D)
 # Dolfin only fully supports first-order meshes

@@ -1,4 +1,4 @@
-# scicomp_utils_mesh
+# scicomp_utils_misc
 
 **Table of Contents**
 

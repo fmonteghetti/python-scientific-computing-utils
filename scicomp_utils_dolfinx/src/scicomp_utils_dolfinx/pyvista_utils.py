@@ -7,7 +7,7 @@ Utility functions for pyvista.
 
 import pyvista as pv
 from PIL import Image
-from scientific_computing_utils import PIL_utils
+from scicomp_utils_misc import PIL_utils
 
 def get_trimmed_screenshot(plotter,file=None):
     """

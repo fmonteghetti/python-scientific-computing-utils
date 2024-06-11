@@ -7,7 +7,9 @@
 from mpi4py import MPI
 import dolfinx.plot
 import ufl
-from scientific_computing_utils import PETSc_utils, gmsh_utils, gmsh_utils_fenicsx
+from scicomp_utils_misc import PETSc_utils
+from scicomp_utils_mesh import gmsh_utils 
+from scicomp_utils_dolfinx import gmsh_utils_fenicsx
 import pyvista as pv
 from petsc4py import PETSc
 

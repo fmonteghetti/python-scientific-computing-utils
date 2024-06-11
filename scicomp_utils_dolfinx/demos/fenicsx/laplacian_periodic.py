@@ -23,18 +23,18 @@ comm = MPI.COMM_WORLD
 from petsc4py import PETSc
     # Eigenvalue problem
 from slepc4py import SLEPc
-from scientific_computing_utils import SLEPc_utils
-from scientific_computing_utils import fenicsx_utils
-from scientific_computing_utils import dolfinx_mpc_utils
+from scicomp_utils_misc import SLEPc_utils
+from scicomp_utils_dolfinx import fenicsx_utils
+from scicomp_utils_dolfinx import dolfinx_mpc_utils
     # Mesh
-from scientific_computing_utils import gmsh_utils
-from scientific_computing_utils import meshio_utils
+from scicomp_utils_mesh import gmsh_utils
+from scicomp_utils_mesh import meshio_utils
     # Plot
 import matplotlib.pyplot as plt
 import pyvista as pv
-from scientific_computing_utils import pyvista_utils
+from scicomp_utils_misc import pyvista_utils
     # Validation
-from scientific_computing_utils import PDE_exact
+from scicomp_utils_misc import PDE_exact
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 

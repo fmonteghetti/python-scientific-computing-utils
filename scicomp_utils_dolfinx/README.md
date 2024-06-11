@@ -1,32 +1,29 @@
-# python-scientific-computing-utils
+# scicomp_utils_dolfinx
 
 **Table of Contents**
 
 - [Description](#description)
 - [Installation](#installation)
-- [Development in Visual Studio Code](#development-in-visual-studio-code)
+- [Development](#development)
 - [License](#license)
 
 # Description
 
-Collection of elementary wrappers (functions and classes) for rapid prototyping of numerical methods for partial differential equations in python. Tutorial scripts demonstrating the modules are available in the `demos` folder.
+Collection of elementary wrappers (functions and classes) for rapid prototyping of numerical methods for partial differential equations using `dolfinx`. Tutorial scripts demonstrating the modules are available in the `demos` folder.
 
 The provided modules rely on the following packages:
 - `gmsh`: mesh generation.
-- `fenics` or `fenicsx`: finite element assembly.
+- `fenicsx`: finite element assembly.
 - `petsc4py`: sparse linear algebra.
 - `slepc`: sparse eigensolver.
 
 # Installation
 
-Build and install with:
-
 ```console
-hatch build
-pip install dist/scientific_computing_utils-*.whl
+pip install "scicomp_utils_dolfinx @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@branch#subdirectory=scicomp_utils_dolfinx"
 ```
 
-# Development in Visual Studio Code
+# Development
 
 ## Local
 
@@ -34,17 +31,11 @@ Install the package in editable mode:
 
 ```console
     # in a virtual environment
-pip install -e /path/to/repository # virtual environment
+pip install -e "scicomp_utils_dolfinx @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_dolfinx"
     # in a conda environment
-pip install --no-build-isolation --no-deps -e /path/to/repository
+pip install --no-build-isolation --no-deps -e "scicomp_utils_dolfinx @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_dolfinx"
 ```
-
-In the command palette of VS code:
-
-- `File: Open Workspace from File` and select the desired `.code-workspace` file in the `.vscode` folder.
-- `Python: Select Interpreter` and select the python environment where the package has been installed.
-
-## Docker (for dolfinx)
+## Docker via devcontainers (Visual Studio Code)
 
 The file `.devcontainer/devcontainer.json` provides a development container that contains the `dolfinx` and `dolfinx_mpc` packages.
 

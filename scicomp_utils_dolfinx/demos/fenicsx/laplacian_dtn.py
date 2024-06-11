@@ -26,11 +26,11 @@ import numpy as np
 import time
 import dolfinx
 import ufl
-from scientific_computing_utils import gmsh_utils
-from scientific_computing_utils import gmsh_utils_fenicsx
-from scientific_computing_utils import fenicsx_utils
-from scientific_computing_utils import SLEPc_utils
-from scientific_computing_utils import PETSc_utils
+from scicomp_utils_mesh import gmsh_utils
+from scicomp_utils_dolfinx import gmsh_utils_fenicsx
+from scicomp_utils_dolfinx import fenicsx_utils
+from scicomp_utils_misc import SLEPc_utils
+from scicomp_utils_misc import PETSc_utils
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 

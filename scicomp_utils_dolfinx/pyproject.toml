@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "scicomp_utils_dolfinx"
 dynamic = ["version"]
-description = 'Collection of utility modules for rapid prototyping of numerical methods for partial differential equations in python.'
+description = 'Collection of utility modules for dolfinx.'
 readme = "README.md"
 requires-python = ">=3.9"
 license = "GPL-3.0-only"
@@ -18,12 +18,13 @@ classifiers = [
   "Programming Language :: Python",
 ]
 dependencies = ['fenics-dolfinx==0.5.*',
-                'scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/#subdirectory=scicomp_utils_dolfinx']
+                'scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@split#subdirectory=scicomp_utils_mesh',
+                'scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@split#subdirectory=scicomp_utils_misc']
 
 [project.urls]
-Documentation = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_dolinfx#readme"
+Documentation = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_dolfinx#readme"
 Issues = "https://github.com/fmonteghetti/python-scientific-computing-utils/issues"
-Source = "https://github.com/fmonteghetti/python-scientific-computing-utils"
+Source = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_dolfinx"
 
 [tool.hatch]
 version.path = "src/scicomp_utils_dolfinx/__init__.py"

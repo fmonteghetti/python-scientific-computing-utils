@@ -21,18 +21,18 @@ multiphenics_utils.PDAE_nonlinear (case h!=0).
 import numpy as np
 import matplotlib.pyplot as plt
 
-from scientific_computing_utils import gmsh_utils
-from scientific_computing_utils import meshio_utils
+from scicomp_utils_mesh import gmsh_utils
+from scicomp_utils_mesh import meshio_utils
 
 import fenics as fe
-from scientific_computing_utils import fenics_utils
+from scicomp_utils_dolfin import fenics_utils
 import multiphenics as mpfe
-from scientific_computing_utils import multiphenics_utils
+from scicomp_utils_dolfin import multiphenics_utils
 
 fe.SubSystemsManager.init_petsc()
 from petsc4py import PETSc
 from mpi4py import MPI
-from scientific_computing_utils import PETSc_utils
+from scicomp_utils_misc import PETSc_utils
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 

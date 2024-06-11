@@ -18,15 +18,15 @@ Both 2D and 3D meshes can be used.
 import numpy as np
 import matplotlib.pyplot as plt
 import fenics as fe
-from scientific_computing_utils import gmsh_utils
-from scientific_computing_utils import fenics_utils
-from scientific_computing_utils import meshio_utils
+from scicomp_utils_mesh import gmsh_utils
+from scicomp_utils_dolfin import fenics_utils
+from scicomp_utils_mesh import meshio_utils
 import multiphenics as mpfe
-from scientific_computing_utils import multiphenics_utils
+from scicomp_utils_dolfin import multiphenics_utils
 from petsc4py import PETSc
 fe.SubSystemsManager.init_petsc()
 PETSc.Sys.pushErrorHandler("python")
-from scientific_computing_utils import PETSc_utils
+from scicomp_utils_misc import PETSc_utils
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 #%% Generate mesh using gmsh (2D)
