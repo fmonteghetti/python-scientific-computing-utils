@@ -18,8 +18,8 @@ classifiers = [
   "Programming Language :: Python",
 ]
 dependencies = ['multiphenics', 'fenics',
-                'scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@split#subdirectory=scicomp_utils_mesh',
-                'scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@split#subdirectory=scicomp_utils_misc']
+                'scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@main#subdirectory=scicomp_utils_mesh',
+                'scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@main#subdirectory=scicomp_utils_misc']
 
 [project.urls]
 Documentation = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_dolfin#readme"
