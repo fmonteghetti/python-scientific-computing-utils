@@ -17,7 +17,7 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
 ]
-dependencies = ['numpy','scipy','petsc4py','mpi4py','slepc4py','pillow']
+dependencies = ['numpy','scipy','mpi4py','petsc4py','slepc4py','pillow']
 
 [project.urls]
 Documentation = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_misc#readme"

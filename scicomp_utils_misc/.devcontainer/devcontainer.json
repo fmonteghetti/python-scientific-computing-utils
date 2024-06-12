@@ -1,0 +1,25 @@
+{
+    "build": { 
+        "dockerfile": "Dockerfile",
+        // "target": "complex",
+         "args": {
+             "PYTHON_VERSION": "3.12.4",
+            "GMSH_VERSION": "4.9.0",            
+             "USER_NAME": "misc",
+             "USER_UID": "1000",
+             "USER_GID": "1000",          
+             }
+        },
+    "customizations": {
+        // Configure properties specific to VS Code.
+        "vscode": {
+            // Add the IDs of extensions you want installed when the container is created.
+            "extensions": ["ms-python.python","ms-python.vscode-pylance","ms-toolsai.jupyter"]
+        }
+    },
+    "containerUser": "misc",
+    // Run at the end of docker build
+    "postCreateCommand": "sh ${containerWorkspaceFolder}/.devcontainer/post_create_command.sh '${containerWorkspaceFolder}'",
+    // Run at container start (avoid commands that need internet)
+    "postStartCommand": "sh ${containerWorkspaceFolder}/.devcontainer/post_start_command.sh '${containerWorkspaceFolder}'",
+}
