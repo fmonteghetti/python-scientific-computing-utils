@@ -17,8 +17,7 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
 ]
-dependencies = [
-  'multiphenics', 'fenics',
+dependencies = ['multiphenics', 'fenics',
                 'scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@split#subdirectory=scicomp_utils_mesh',
                 'scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@split#subdirectory=scicomp_utils_misc']
 
