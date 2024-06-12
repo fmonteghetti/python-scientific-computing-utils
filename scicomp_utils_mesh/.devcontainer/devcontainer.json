@@ -3,9 +3,8 @@
         "dockerfile": "Dockerfile",
         "args": {
             "PYTHON_VERSION": "3.12.4",
-            "PYVISTA_VERSION": "0.36.1",
             "GMSH_VERSION": "4.9.0",            
-            "USER_NAME": "fenics",
+            "USER_NAME": "mesh",
             "USER_UID": "1000",
             "USER_GID": "1000",          
             }
@@ -17,9 +16,9 @@
             "extensions": ["ms-python.python","ms-python.vscode-pylance","ms-toolsai.jupyter"]
         }
     },
-    "containerUser": "fenics",
+    "containerUser": "mesh",
     // Run at the end of docker build
-    //"postCreateCommand": "sh ${containerWorkspaceFolder}/.devcontainer/post_create_command.sh '${containerWorkspaceFolder}'",
+    "postCreateCommand": "sh ${containerWorkspaceFolder}/.devcontainer/post_create_command.sh '${containerWorkspaceFolder}'",
     // Run at container start (avoid commands that need internet)
-    //"postStartCommand": "sh ${containerWorkspaceFolder}/.devcontainer/post_start_command.sh '${containerWorkspaceFolder}'",
+    "postStartCommand": "sh ${containerWorkspaceFolder}/.devcontainer/post_start_command.sh '${containerWorkspaceFolder}'",
 }

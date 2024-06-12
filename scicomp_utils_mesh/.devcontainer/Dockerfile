@@ -1,14 +1,5 @@
-# Dockerfile providing dolfinx and dolfinx_mpc. 
-# Arguments:
-#	TAG				https://hub.docker.com/r/dokken92/dolfinx_mpc/tags	
-#	USER_NAME		name of default non-root user
-#	USER_UID		UID of default non-root user
-#	USER_GID		GID of default non-root user
-#	PYVISTA_VERSION	version of pyvista
-#	GMSH_VERSION	version of gmsh
-# Build targets:
-#	real	use real PetscScalar
-#   complex	use complex PetscScalar
+# Dockerfile providing python and gmsh.  
+
 ARG PYTHON_VERSION
 FROM python:${PYTHON_VERSION} AS base
 
@@ -17,8 +8,24 @@ ARG USER_UID
 ARG USER_GID
 ARG GMSH_VERSION
 
-# Install:
-#   - pyvista
+# Install gmsh dependencies.
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get -qq update && \
+    apt-get -yq --with-new-pkgs -o Dpkg::Options::="--force-confold" upgrade && \
+    apt-get -y install \
+    libglu1 \
+    libxcursor-dev \
+    libxft2 \
+    libxinerama1 \
+    libfltk1.3-dev \
+    libfreetype6-dev  \
+    libgl1-mesa-dev \
+    libocct-foundation-dev \
+    libocct-data-exchange-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+    # Install:
 #   - ipykernel (interactive window in vscode)
 #   - Pandas (array inspections in vs code)
 RUN pip3 install --upgrade --no-cache-dir \
