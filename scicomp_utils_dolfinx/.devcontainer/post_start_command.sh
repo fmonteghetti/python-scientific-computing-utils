@@ -1,7 +1,7 @@
 #!/bin/sh
 # Setup docker environment.
 containerWorkspace="$1"
-# Local editable install of scientific-computing-utils package
+# Local editable install
 pip install -e ${containerWorkspace}
 # Launch X virtual framebuffer in the background (neede for pyvista)
 # (Check with ps -ef | grep Xvfb; the 'sleep 3' is important.)

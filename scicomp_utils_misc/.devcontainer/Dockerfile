@@ -33,9 +33,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install:
-#   - ipykernel (interactive window in vscode)
-#   - Pandas (array inspections in vs code)
+# ipykernel (interactive window in vscode)
+# pandas (array inspections in vs code)
 RUN pip3 install --upgrade --no-cache-dir \
                  ipykernel \
                  gmsh==${GMSH_VERSION} matplotlib \

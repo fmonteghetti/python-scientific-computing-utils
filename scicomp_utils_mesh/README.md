@@ -9,13 +9,12 @@
 
 # Description
 
-Collection of elementary wrappers around `gmsh` and `meshio`. Tutorial scripts 
-demonstrating the modules are available in the `demos` folder.
+Collection of elementary wrappers around `gmsh` and `meshio`. Tutorial scripts demonstrating the modules are available in the `demos` folder.
 
 # Installation
 
 ```console
-pip install "scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_mesh"
+pip install . 
 ```
 
 # Development
@@ -26,9 +25,9 @@ Install the package in editable mode:
 
 ```console
     # in a virtual environment
-pip install -e "scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_mesh"
+pip install -e . 
     # in a conda environment
-pip install --no-build-isolation --no-deps -e "scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_mesh"
+pip install --no-build-isolation --no-deps -e . 
 ```
 
 ## Docker via devcontainers (Visual Studio Code)

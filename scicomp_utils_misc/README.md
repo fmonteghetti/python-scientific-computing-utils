@@ -14,7 +14,7 @@ Collection of miscellaneous utility functions.
 # Installation
 
 ```console
-pip install "scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@branch#subdirectory=scicomp_utils_misc"
+pip install .
 ```
 
 # Development
@@ -25,9 +25,9 @@ Install the package in editable mode:
 
 ```console
     # in a virtual environment
-pip install -e "scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_misc"
+pip install -e . 
     # in a conda environment
-pip install --no-build-isolation --no-deps -e "scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_misc"
+pip install --no-build-isolation --no-deps -e .
 ```
 
 ## Docker via devcontainers (Visual Studio Code)

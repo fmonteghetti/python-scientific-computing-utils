@@ -13,14 +13,14 @@ Collection of elementary wrappers (functions and classes) for rapid prototyping 
 
 The provided modules rely on the following packages:
 - `gmsh`: mesh generation.
-- `fenicsx`: finite element assembly.
+- `dolfinx`: finite element assembly.
 - `petsc4py`: sparse linear algebra.
 - `slepc`: sparse eigensolver.
 
 # Installation
 
 ```console
-pip install "scicomp_utils_dolfinx @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@branch#subdirectory=scicomp_utils_dolfinx"
+pip install .
 ```
 
 # Development
@@ -31,10 +31,11 @@ Install the package in editable mode:
 
 ```console
     # in a virtual environment
-pip install -e "scicomp_utils_dolfinx @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_dolfinx"
+pip install -e . 
     # in a conda environment
-pip install --no-build-isolation --no-deps -e "scicomp_utils_dolfinx @ git+https://github.com/fmonteghetti/python-scientific-computing-utils@branch#subdirectory=scicomp_utils_dolfinx"
+pip install --no-build-isolation --no-deps -e . 
 ```
+
 ## Docker via devcontainers (Visual Studio Code)
 
 The file `.devcontainer/devcontainer.json` provides a development container that contains the `dolfinx` and `dolfinx_mpc` packages.

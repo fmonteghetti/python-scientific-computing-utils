@@ -1,20 +1,23 @@
 {
-    "build": { 
+    "build": {
         "dockerfile": "Dockerfile",
-        // "target": "complex",
-         "args": {
-             "PYTHON_VERSION": "3.12.4",
-            "GMSH_VERSION": "4.9.0",            
-             "USER_NAME": "misc",
-             "USER_UID": "1000",
-             "USER_GID": "1000",          
-             }
-        },
+        "args": {
+            "PYTHON_VERSION": "3.12.4",
+            "GMSH_VERSION": "4.9.0",
+            "USER_NAME": "misc",
+            "USER_UID": "1000",
+            "USER_GID": "1000",
+        }
+    },
     "customizations": {
         // Configure properties specific to VS Code.
         "vscode": {
             // Add the IDs of extensions you want installed when the container is created.
-            "extensions": ["ms-python.python","ms-python.vscode-pylance","ms-toolsai.jupyter"]
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-toolsai.jupyter"
+            ]
         }
     },
     "containerUser": "misc",
