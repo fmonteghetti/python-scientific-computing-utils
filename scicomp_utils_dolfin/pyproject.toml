@@ -17,12 +17,16 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
 ]
-dependencies = ['numpy','scipy','pillow','petsc4py','mpi4py','slepc4py']
+dependencies = [
+  'multiphenics', 'fenics',
+                'scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@split#subdirectory=scicomp_utils_mesh',
+                'scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@split#subdirectory=scicomp_utils_misc']
 
 [project.urls]
 Documentation = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_dolfin#readme"
 Issues = "https://github.com/fmonteghetti/python-scientific-computing-utils/issues"
 Source = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_dolfin"
 
-[tool.hatch.version]
-path = "src/scicomp_utils_dolfin/__init__.py"
+[tool.hatch]
+version.path = "src/scicomp_utils_dolfin/__init__.py"
+metadata.allow-direct-references = true
