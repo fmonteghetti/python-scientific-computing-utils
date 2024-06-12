@@ -17,9 +17,7 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
 ]
-dependencies = ['fenics',
-                'scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@split#subdirectory=scicomp_utils_mesh',
-                'scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@split#subdirectory=scicomp_utils_misc']
+dependencies = ['numpy','scipy','petsc4py','mpi4py','slepc4py','pillow']
 
 [project.urls]
 Documentation = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_misc#readme"
