@@ -43,7 +43,6 @@ The file `.devcontainer/devcontainer.json` provides a development container that
 To use it, in the command palette of VS code:
 
 - `Dev Containers: Open Folder in Container` and select root of this repository.
-- `File: Open Workspace from File` and select `.vscode/docker.code-workspace`.
 - `Python: Select Interpreter` and select the python environment.
 
 You can switch between real and complex `PetscScalar` by editing the `target` field in `.devcontainer/devcontainer.json` and selecting `Dev Containers: Rebuild Container` in the VS code command palette.

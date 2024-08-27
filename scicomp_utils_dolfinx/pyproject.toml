@@ -17,7 +17,7 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
 ]
-dependencies = ['fenics-dolfinx<=0.5.*',
+dependencies = ['fenics-dolfinx<=0.5',
                 'scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@main#subdirectory=scicomp_utils_mesh',
                 'scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@main#subdirectory=scicomp_utils_misc']
 
