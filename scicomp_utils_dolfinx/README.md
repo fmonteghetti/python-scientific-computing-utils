@@ -19,26 +19,25 @@ The provided modules rely on the following packages:
 
 # Installation
 
-```console
-pip install .
-```
+## Local installation
 
-# Development
-
-## Local
-
-Install the package in editable mode:
+The package `scicomp_utils_dolfinx` can be installed in a new conda environment with:
 
 ```console
-    # in a virtual environment
-pip install -e . 
-    # in a conda environment
-pip install --no-build-isolation --no-deps -e . 
+conda env create --file environment.yml 
 ```
 
-## Docker via devcontainers (Visual Studio Code)
+For development, install `scicomp_utils_dolfinx` in editable mode with
 
-The file `.devcontainer/devcontainer.json` provides a development container that contains the `dolfinx` and `dolfinx_mpc` packages.
+```console
+conda env create --file environment_development.yml 
+```
+
+One limitation is that this local environment does not provide the package `dolfinx_mpc`.
+
+## Containerized installation (docker via devcontainers)
+
+The file `.devcontainer/devcontainer.json` provides a development container that contains the `dolfinx_mpc` package.
 
 To use it, in the command palette of VS code:
 
