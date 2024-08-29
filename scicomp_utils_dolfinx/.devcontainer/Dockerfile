@@ -5,29 +5,23 @@
 #	USER_UID		UID of default non-root user
 #	USER_GID		GID of default non-root user
 #	PYVISTA_VERSION	version of pyvista
-#	GMSH_VERSION	version of gmsh
 # Build targets:
 #	real	use real PetscScalar
 #   complex	use complex PetscScalar
 
 ARG TAG
-FROM dokken92/dolfinx_mpc:${TAG} AS base
-
+FROM ghcr.io/jorgensd/dolfinx_mpc:${TAG} AS base
 ARG TAG
 ARG USER_NAME
 ARG USER_UID
 ARG USER_GID
 ARG PYVISTA_VERSION
-ARG GMSH_VERSION
 
-# Install:
-#   - pyvista
-#   - ipykernel (interactive window in vscode)
-#   - Pandas (array inspections in vs code)
-RUN pip3 install --upgrade --no-cache-dir pyvista==${PYVISTA_VERSION}  \
-                 ipykernel \
-                 gmsh==${GMSH_VERSION} matplotlib \
-                 pandas
+# ipykernel and pandas needed for vs code
+RUN pip3 install --upgrade --no-cache-dir \
+                 pyvista==${PYVISTA_VERSION} \
+                 matplotlib \
+                 ipykernel pandas
 
 # Install X virtual framebuffer and mesa (for pyvista plots)
 RUN apt-get update && apt-get -y install xvfb libglx-mesa0
@@ -48,8 +42,5 @@ FROM base as real
 
 # Target: complex PetscScalar
 FROM base as complex
-	# Build dolfinx_mpc for complex PetscScalar
-ADD build_complex_dolfinx_mpc.sh /build_complex.sh
-RUN chmod +x /build_complex.sh \
-    && /build_complex.sh \
-    && echo "source /usr/local/bin/dolfinx-complex-mode" >> /etc/profile
+    # New dolfinx_mpc docker image support complex mode 
+RUN echo "source /usr/local/bin/dolfinx-complex-mode" >> /etc/profile

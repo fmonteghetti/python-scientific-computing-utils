@@ -1,6 +1,5 @@
-# This yml file provides a working environment without dolfinx_mpc.
 # The package `scicomp_utils_dolfinx` is installed in editable mode.
-name: dolfinx-0.5-complex
+name: dolfinx-0.6-complex
 channels:
   - conda-forge
   - defaults
@@ -8,9 +7,11 @@ dependencies: # pkg_name=version=build
   - petsc=3.*=complex*
   - petsc4py
   - mpich
-  - fenics-dolfinx=0.5.0
-  - gmsh=4.9.3
-  - python-gmsh=4.9.3
+  - fenics-dolfinx=0.6.0 # Also working: 0.7.1, 0.7.2, 0.7.3, 0.8.0
+  - dolfinx_mpc
+  - libdolfinx_mpc
+  - gmsh
+  - python-gmsh
   - matplotlib
   - scipy
   - pip
