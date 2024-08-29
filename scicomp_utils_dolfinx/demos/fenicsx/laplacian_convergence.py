@@ -130,7 +130,6 @@ plotter.show()
 #pv.save_meshio("result.vtk",grid)
 #%% Plot solution: alternative method
 # Create a pyvista barebone pyvista plotter, screenshot, matplotlib
-from scientific_computing_utils import pyvista_utils
 grid.clear_arrays()
 grid.point_data["u"] = uh.x.array.real
 grid.set_active_scalars("u")
