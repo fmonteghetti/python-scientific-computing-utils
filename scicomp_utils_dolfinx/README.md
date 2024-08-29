@@ -33,8 +33,6 @@ For development, install `scicomp_utils_dolfinx` in editable mode with
 conda env create --file environment_development.yml 
 ```
 
-One limitation is that this local environment does not provide the package `dolfinx_mpc`.
-
 ## Containerized installation (docker via devcontainers)
 
 The file `.devcontainer/devcontainer.json` provides a development container that contains the `dolfinx_mpc` package.
