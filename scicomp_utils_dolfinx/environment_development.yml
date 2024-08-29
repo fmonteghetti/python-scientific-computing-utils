@@ -14,12 +14,12 @@ dependencies: # pkg_name=version=build
   - python-gmsh
   - matplotlib
   - scipy
+  - pyvista=0.36.1
   - pip
   - pip:
     - hatchling
     - editables
     - scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@main#subdirectory=scicomp_utils_mesh
     - scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@main#subdirectory=scicomp_utils_misc
-    - pyvista
     - pybind11
     - -e .
