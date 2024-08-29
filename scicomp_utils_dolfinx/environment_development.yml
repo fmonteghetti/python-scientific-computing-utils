@@ -1,25 +1,21 @@
 # The package `scicomp_utils_dolfinx` is installed in editable mode.
-name: dolfinx-0.6-complex
 channels:
   - conda-forge
   - defaults
 dependencies: # pkg_name=version=build
   - petsc=3.*=complex*
-  - petsc4py
-  - mpich
+  - petsc4py=3.19.*
+  - mpich=4.2.*
   - fenics-dolfinx=0.6.0 # Also working: 0.7.1, 0.7.2, 0.7.3, 0.8.0
-  - dolfinx_mpc
-  - libdolfinx_mpc
-  - gmsh
-  - python-gmsh
-  - matplotlib
-  - scipy
+  - dolfinx_mpc=0.6.1
+  - libdolfinx_mpc=0.6.1
+  - pytest=8.2.*
+  - matplotlib=3.9.*
+  - scipy=1.14.*
   - pyvista=0.36.1
-  - pip
+  - pip=24.2
+  - hatchling=1.25.0
+  - editables=0.5
   - pip:
-    - hatchling
-    - editables
-    - scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@main#subdirectory=scicomp_utils_mesh
-    - scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@main#subdirectory=scicomp_utils_misc
-    - pybind11
-    - -e .
+    - gmsh==4.12.*
+    - -e . 
