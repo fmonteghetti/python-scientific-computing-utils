@@ -32,7 +32,7 @@ from scicomp_utils_mesh import meshio_utils
     # Plot
 import matplotlib.pyplot as plt
 import pyvista as pv
-from scicomp_utils_misc import pyvista_utils
+from scicomp_utils_dolfinx import pyvista_utils
     # Validation
 from scicomp_utils_misc import PDE_exact
 import os

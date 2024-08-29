@@ -28,7 +28,7 @@ from scicomp_utils_mesh import meshio_utils
     # Plot
 import matplotlib.pyplot as plt
 import pyvista as pv
-from scicomp_utils_misc import pyvista_utils
+from scicomp_utils_dolfinx import pyvista_utils
 import os
 DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 #%% Load mesh
