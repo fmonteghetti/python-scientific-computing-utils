@@ -15,6 +15,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import scipy.sparse as sp
 import petsc4py
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import Poisson_fenics as Poisson
 #%% 1 -- Create mesh and define function space
 nsteps=10

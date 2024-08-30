@@ -20,12 +20,13 @@ from scicomp_utils_dolfin import gmsh_utils_fenics
 from scicomp_utils_dolfin import fenics_utils
 from scicomp_utils_mesh import meshio_utils
 import os
+DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 #%% Generate mesh using gmsh (2D)
 # Dolfin only fully supports first-order meshes
-geofile=os.path.join("mesh","Circle.geo")
-gmshfile=os.path.join("mesh","Circle.msh")
-geofile=os.path.join("mesh","Circle-simple.geo")
-gmshfile=os.path.join("mesh","Circle-simple.msh")
+geofile=os.path.join(DIR_MESH,"Circle.geo")
+gmshfile=os.path.join(DIR_MESH,"Circle.msh")
+geofile=os.path.join(DIR_MESH,"Circle-simple.geo")
+gmshfile=os.path.join(DIR_MESH,"Circle-simple.msh")
 dim = 2
 gmsh_utils.generate_mesh_cli(geofile,gmshfile,dim,refinement=0,log=1,\
                              parameters={'R':1,'R_TR':0.5,'lc':1/40},order=1,
@@ -35,10 +36,10 @@ Dirichlet_bnd_name = 'Gamma-ext'
 Omega_int_name = 'Omega-int'
 Omega_ext_name = 'Omega-ext'
 #%% Generate mesh using gmsh (3D)
-geofile=os.path.join("mesh","torus.geo")
-gmshfile=os.path.join("mesh","torus.msh")
-geofile=os.path.join("mesh","torusdouble.geo")
-gmshfile=os.path.join("mesh","torusdouble.msh")
+geofile=os.path.join(DIR_MESH,"torus.geo")
+gmshfile=os.path.join(DIR_MESH,"torus.msh")
+geofile=os.path.join(DIR_MESH,"torusdouble.geo")
+gmshfile=os.path.join(DIR_MESH,"torusdouble.msh")
 dim = 3
 gmsh_utils.generate_mesh_cli(geofile,gmshfile,dim,refinement=0,log=1,\
                              parameters={'R_mi':0.5,'R_ma':2,'lc':1/5},

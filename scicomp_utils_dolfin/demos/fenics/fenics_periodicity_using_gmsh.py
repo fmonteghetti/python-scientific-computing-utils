@@ -29,10 +29,11 @@ from slepc4py import SLEPc
 from scicomp_utils_misc import SLEPc_utils
 from scicomp_utils_misc import PDE_exact
 import os
+DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 
 # Load mesh
-geofile=os.path.join("mesh","Circle-Rectangle-Periodic.geo")
-mshfile=os.path.join("mesh","Circle-Rectangle-Periodic.msh")
+geofile=os.path.join(DIR_MESH,"Circle-Rectangle-Periodic.geo")
+mshfile=os.path.join(DIR_MESH,"Circle-Rectangle-Periodic.msh")
 R = 2
 R_TR=0.5*R
 y_offset = -R-fe.DOLFIN_PI

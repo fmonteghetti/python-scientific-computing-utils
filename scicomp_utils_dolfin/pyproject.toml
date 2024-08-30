@@ -17,9 +17,15 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
 ]
-dependencies = ['multiphenics', 'fenics',
-                'scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@main#subdirectory=scicomp_utils_mesh',
-                'scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@main#subdirectory=scicomp_utils_misc']
+dependencies = [
+  'multiphenics==0.3.0',
+  'fenics',
+  'matplotlib==3.9.*',
+  'scipy==1.*',
+  'h5py',
+  'scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@1c02c2b8efd256a2533fb9ba70ca93e5d197746c#subdirectory=scicomp_utils_mesh',
+  'scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@f64f999b32a0db280af627e0eb65e3afc9857bce#subdirectory=scicomp_utils_misc'
+]
 
 [project.urls]
 Documentation = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_dolfin#readme"

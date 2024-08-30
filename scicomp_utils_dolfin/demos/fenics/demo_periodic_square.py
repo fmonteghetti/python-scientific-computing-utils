@@ -22,14 +22,15 @@ from slepc4py import SLEPc
 from scicomp_utils_misc import SLEPc_utils
 from scicomp_utils_misc import PDE_exact
 import os
+DIR_MESH=os.path.join(os.path.dirname(os.path.abspath(__file__)),"mesh")
 L = [1, 1] # square dimensions
 bc_hor = "periodic" # boundary conditions on {x=0} and {x=L1} 
                     # periodic, neumann, dirichlet
 bc_vert = "periodic" # boundary conditions on {x=0} and {y=L2}
                       # periodic, neumann, dirichlet
 # Load mesh
-geofile=os.path.join("mesh","Rectangle.geo")
-mshfile=os.path.join("mesh","Rectangle.msh")
+geofile=os.path.join(DIR_MESH,"Rectangle.geo")
+mshfile=os.path.join(DIR_MESH,"Rectangle.msh")
 gmsh_utils.generate_mesh_cli(geofile,mshfile,2,refinement=0,binary=True,
                              parameters={'x_r':L[0],'y_t':L[1],
                                          'N_x': 51, 'N_y': 51})

@@ -1,12 +1,5 @@
 # scicomp_utils_dolfin
 
-**Table of Contents**
-
-- [Description](#description)
-- [Installation](#installation)
-- [Development](#development)
-- [License](#license)
-
 # Description
 
 Collection of elementary wrappers (functions and classes) for rapid prototyping of numerical methods for partial differential equations in python using `fenics` and `multiphenics`. Tutorial scripts demonstrating the modules are available in the `demos` folder.
@@ -19,19 +12,16 @@ The provided modules rely on the following packages:
 
 # Installation
 
+The package `scicomp_utils_dolfin` can be installed in a new conda environment with:
+
 ```console
-pip install . 
+conda env create --file environment.yml 
 ```
 
-# Development
-
-Install the package in editable mode:
+For development, install in editable mode with
 
 ```console
-    # in a virtual environment
-pip install -e . 
-    # in a conda environment
-pip install --no-build-isolation --no-deps -e . 
+conda env create --file environment_dev.yml 
 ```
 
 # License

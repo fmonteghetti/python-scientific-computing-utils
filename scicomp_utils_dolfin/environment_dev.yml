@@ -1,0 +1,15 @@
+name: scicomp_utils_dolfin
+channels:
+  - conda-forge
+  - defaults
+dependencies: # pkg_name=version=build
+  - fenics==2019.1.0
+  - matplotlib=3.9.*
+  - scipy=1.*
+  - pip=24.2
+  - hatchling=1.25.0
+  - editables=0.5
+  - pip:
+    - gmsh==4.12.*
+    - h5py==3.11.*
+    - -e . 
