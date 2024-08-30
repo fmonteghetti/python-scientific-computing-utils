@@ -1,0 +1,14 @@
+name: scicomp_utils_mesh
+channels:
+  - conda-forge
+  - defaults
+dependencies: # pkg_name=version=build
+  - matplotlib=3.9.*
+  - meshio=5.3.*
+  - numpy=1.*
+  - pip=24.2
+  - hatchling=1.25.0
+  - editables=0.5
+  - pip:
+    - gmsh==4.12.*
+    - . 

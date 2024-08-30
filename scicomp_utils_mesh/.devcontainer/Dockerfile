@@ -1,4 +1,4 @@
-# Dockerfile providing python and gmsh.  
+# Dockerfile providing python and basic gmsh dependencies.  
 
 ARG PYTHON_VERSION
 FROM python:${PYTHON_VERSION} AS base
@@ -6,7 +6,6 @@ FROM python:${PYTHON_VERSION} AS base
 ARG USER_NAME
 ARG USER_UID
 ARG USER_GID
-ARG GMSH_VERSION
 
 # Install gmsh dependencies.
 RUN export DEBIAN_FRONTEND=noninteractive && \
@@ -25,13 +24,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# ipykernel (interactive window in vscode)
-# pandas (array inspections in vs code)
-RUN pip3 install --upgrade --no-cache-dir \
-                 ipykernel \
-                 gmsh==${GMSH_VERSION} matplotlib \
-                 pandas
-
 # Add a passwd to root account
 RUN echo 'root:root' | chpasswd
 
@@ -40,3 +32,6 @@ RUN groupadd --gid $USER_GID $USER_NAME \
  	&& useradd --uid $USER_UID --gid $USER_GID -m $USER_NAME \
 	&& echo $USER_NAME:$USER_NAME | chpasswd \
 	&& chsh -s /bin/bash $USER_NAME
+
+    # Add ~/.local/bin to PATH (enables non-root pip use)
+ENV PATH="/home/${USER_NAME}/.local/bin:${PATH}"

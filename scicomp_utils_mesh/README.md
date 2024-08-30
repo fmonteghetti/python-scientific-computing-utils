@@ -1,43 +1,32 @@
 # scicomp_utils_mesh
 
-**Table of Contents**
-
-- [Description](#description)
-- [Installation](#installation)
-- [Development](#development)
-- [License](#license)
-
 # Description
 
 Collection of elementary wrappers around `gmsh` and `meshio`. Tutorial scripts demonstrating the modules are available in the `demos` folder.
 
 # Installation
 
-```console
-pip install . 
-```
+## Local installation
 
-# Development
-
-## Local
-
-Install the package in editable mode:
+The package can be installed in a new conda environment with:
 
 ```console
-    # in a virtual environment
-pip install -e . 
-    # in a conda environment
-pip install --no-build-isolation --no-deps -e . 
+conda env create --file environment.yml 
 ```
 
-## Docker via devcontainers (Visual Studio Code)
+For development, install in editable mode with:
+
+```console
+conda env create --file environment_dev.yml 
+```
+
+## Containerized installation (docker via devcontainers)
 
 The file `.devcontainer/devcontainer.json` provides a development container.
 
 To use it, in the command palette of VS code:
 
 - `Dev Containers: Open Folder in Container` and select root of this repository.
-- `Python: Select Interpreter` and select the python environment.
 
 # License
 

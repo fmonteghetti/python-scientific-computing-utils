@@ -3,7 +3,6 @@
         "dockerfile": "Dockerfile",
         "args": {
             "PYTHON_VERSION": "3.12.4",
-            "GMSH_VERSION": "4.9.0",            
             "USER_NAME": "mesh",
             "USER_UID": "1000",
             "USER_GID": "1000",          
