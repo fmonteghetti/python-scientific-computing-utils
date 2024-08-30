@@ -101,14 +101,11 @@ def generate_mesh_cli(geofile,gmshfile,dim,order=1,
     arg=' '.join(arg)
     command=' '.join(command)
     if use_system_options==False:
-        # By setting GMSH_HOME to a non-existent folder, the system
+        # When GMSH_HOME is different from HOME, the system
         # option and session files are not used (General.OptionsFileName, 
         # General.SessionFileName).
-        def get_random_string(N):
-            return ''.join(random.choice(string.ascii_uppercase + string.digits)
-                            for _ in range(N))
         old_env = dict(os.environ)
-        os.environ['GMSH_HOME'] = get_random_string(5) 
+        os.environ['GMSH_HOME'] = os.getcwd() 
     os.system(f"gmsh {geofile} -o {gmshfile} {arg} -string \"{command}\"")   
     for i in range(refinement):
         os.system(f"gmsh {gmshfile} -refine {arg}")
