@@ -6,6 +6,8 @@ Gather convenient functions for gmsh.
 """
 
 import os
+import random
+import string
 import gmsh
 import numpy as np
 
@@ -17,7 +19,8 @@ import numpy as np
 def generate_mesh_cli(geofile,gmshfile,dim,order=1,
                            gmshformat="auto",meshing=-1,recombination=-1,
                            refinement=0,log=0,verbosity=3,flexible_transfinite=False,
-                           binary=False,parameters=dict(),save_and_exit=False):
+                           binary=False,parameters=dict(),save_and_exit=False,
+                           use_system_options=False):
     """
     Generate mesh (MSH format, ASCII) from gmsh geometry file.
 
@@ -52,6 +55,10 @@ def generate_mesh_cli(geofile,gmshfile,dim,order=1,
     save_and_exit: bool, optional
         Save mesh and exit. Useful only when geofile contains meshing
         directives.
+    use_system_options: bool, optional
+        Use the default 'OptionsFileName' and 'SessionFileName'. This is disabled
+        by default for reproducibility.
+
     Returns
     -------
     None.
@@ -93,11 +100,22 @@ def generate_mesh_cli(geofile,gmshfile,dim,order=1,
         arg.append(f"-setnumber {param_name} {parameters[param_name]}")
     arg=' '.join(arg)
     command=' '.join(command)
-    
+    if use_system_options==False:
+        # By setting GMSH_HOME to a non-existent folder, the system
+        # option and session files are not used (General.OptionsFileName, 
+        # General.SessionFileName).
+        def get_random_string(N):
+            return ''.join(random.choice(string.ascii_uppercase + string.digits)
+                            for _ in range(N))
+        old_env = dict(os.environ)
+        os.environ['GMSH_HOME'] = get_random_string(5) 
     os.system(f"gmsh {geofile} -o {gmshfile} {arg} -string \"{command}\"")   
     for i in range(refinement):
         os.system(f"gmsh {gmshfile} -refine {arg}")
     print(f"Mesh '{gmshfile}' generated from '{geofile}'.")
+    if use_system_options==False:
+        os.environ.clear()
+        os.environ.update(old_env) 
 
 def generate_mesh_api(geofile,gmshfile,dim,order=1,refinement=0,
                        gmshformat=2,log=0,verbosity=3,binary=False):
