@@ -1,12 +1,5 @@
 # scicomp_utils_dolfinx
 
-**Table of Contents**
-
-- [Description](#description)
-- [Installation](#installation)
-- [Development](#development)
-- [License](#license)
-
 # Description
 
 Collection of elementary wrappers (functions and classes) for rapid prototyping of numerical methods for partial differential equations using `dolfinx`. Tutorial scripts demonstrating the modules are available in the `demos` folder.
@@ -30,7 +23,7 @@ conda env create --file environment.yml
 For development, install `scicomp_utils_dolfinx` in editable mode with
 
 ```console
-conda env create --file environment_development.yml 
+conda env create --file environment_dev.yml 
 ```
 
 ## Containerized installation (docker via devcontainers)

@@ -1,4 +1,4 @@
-# The package `scicomp_utils_dolfinx` is installed in editable mode.
+name: scicomp_utils_dolfinx
 channels:
   - conda-forge
   - defaults
