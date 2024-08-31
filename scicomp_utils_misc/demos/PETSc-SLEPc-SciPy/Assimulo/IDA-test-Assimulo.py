@@ -9,7 +9,6 @@ Its objective is to investigate the various options.
 
 import numpy as np
 import pylab as P
-import nose
 from assimulo.solvers import IDA
 from assimulo.problem import Implicit_Problem
 

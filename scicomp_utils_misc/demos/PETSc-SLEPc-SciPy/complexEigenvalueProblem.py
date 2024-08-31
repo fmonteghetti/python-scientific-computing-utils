@@ -133,7 +133,7 @@ print("--- Filtered eigenvalues (eigvec criterion / real arithmetic)")
 #%% Solving the real formulation using SLEPc
 from petsc4py import PETSc
 from slepc4py import SLEPc
-import SLEPc_utils
+from scicomp_utils_misc import SLEPc_utils
     # Create sparse eigenvalue problem
 A_petsc = PETSc.Mat()
 A_petsc.create(PETSc.COMM_WORLD)

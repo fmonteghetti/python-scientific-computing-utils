@@ -1,0 +1,18 @@
+name: scicomp_utils_misc
+channels:
+  - conda-forge
+  - defaults
+dependencies: # pkg_name=version=build
+  - matplotlib=3.9.*
+  - numpy=1.*
+  - mpi4py=3.*
+  - scipy=1.*
+  - petsc4py=3.*
+  - slepc4py=3.*
+  - pillow=10.*
+  - assimulo=3.3
+  - pip=24.2
+  - hatchling=1.25.0
+  - editables=0.5
+  - pip:
+    - . 

@@ -25,6 +25,9 @@ import scipy.sparse as sp
 from petsc4py import PETSc
 from slepc4py import SLEPc
 
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import Poisson_FDM_1D as PoissonFDM
 from scicomp_utils_misc import PETSc_utils
 
