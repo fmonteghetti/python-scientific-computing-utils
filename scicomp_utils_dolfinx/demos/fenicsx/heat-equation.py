@@ -113,7 +113,7 @@ if comm.rank ==0:
 tf = 5
 dt = tf/100
 x0 = dae.get_vector()
-x0 = u0.vector
+x0 = u0.x.petsc_vec
     # Solver options
 OptDB = PETSc_utils.get_cleared_options_db()
 PETSc.Sys.pushErrorHandler("python")
@@ -147,5 +147,5 @@ uh.name = "uh"
 with dolfinx.io.XDMFFile(mesh.comm, "demo_heat_equation.xdmf", "w") as file:
     file.write_mesh(dmesh.mesh)
     for (i,y) in enumerate(yp):
-        uh.vector.array = y.array
+        uh.x.petsc_vec.array = y.array
         file.write_function(uh,tp[i])

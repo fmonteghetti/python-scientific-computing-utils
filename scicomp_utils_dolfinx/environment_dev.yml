@@ -6,9 +6,9 @@ dependencies: # pkg_name=version=build
   - petsc=3.*=complex*
   - petsc4py=3.*
   - mpich=4.2.*
-  - fenics-dolfinx=0.8.*
-  - dolfinx_mpc=0.8.*
-  - libdolfinx_mpc=0.8.*
+  - fenics-dolfinx=0.9.*
+  - dolfinx_mpc=0.9.*
+  - libdolfinx_mpc=0.9.*
   - pytest=8.2.*
   - matplotlib=3.9.*
   - scipy=1.14.*

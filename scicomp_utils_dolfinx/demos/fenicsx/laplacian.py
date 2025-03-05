@@ -102,7 +102,7 @@ solver.setOperators(A)
 solver.setType(PETSc.KSP.Type.PREONLY)
 solver.getPC().setType(PETSc.PC.Type.LU)
 uh = dolfinx.fem.Function(V)
-solver.solve(L, uh.vector)
+solver.solve(L, uh.x.petsc_vec)
 uh.x.scatter_forward()
 comm.Barrier()
 if comm.rank ==0:
@@ -184,10 +184,10 @@ u_out = dolfinx.fem.Function(V)
 for i in range(len(eigval)):
     name = f"l_{i}_{eigval[i]:4.4g}"
         # eigvec_r[i] contains only the local dofs, not the ghost dofs
-    u_out.vector.setArray(eigvec_r[i])
+    u_out.x.petsc_vec.setArray(eigvec_r[i])
     u_out.x.scatter_forward()
     grid.point_data[name+"_ur"] = u_out.x.array.copy()
-    u_out.vector.setArray(eigvec_i[i])
+    u_out.x.petsc_vec.setArray(eigvec_i[i])
     u_out.x.scatter_forward()
     grid.point_data[name+"_ui"] = u_out.x.array.copy()
 grid.save(f"shared/demo_laplace_eig_{comm.rank}.vtu")
@@ -202,8 +202,8 @@ for d in range(dim+1):
     # Each process stores 'local' and 'ghost' dofs of functions in V.
 mpi_print(f"# of ghost| local | global dofs: {V.dofmap.index_map.num_ghosts} | {V.dofmap.index_map.size_local} | {V.dofmap.index_map.size_global}")
 mpi_print(f"Global indices of local dofs: {V.dofmap.index_map.local_range}")
-    # Beware of the difference between uh.x and uh.vector
-mpi_print(f"Size of uh.vector (= # of global dofs): {uh.vector.size}")
-mpi_print(f"Local size of uh.vector (= # of local dofs): {uh.vector.sizes[0]}")
+    # Beware of the difference between uh.x and uh.x.petsc_vec
+mpi_print(f"Size of uh.x.petsc_vec (= # of global dofs): {uh.x.petsc_vec.size}")
+mpi_print(f"Local size of uh.x.petsc_vec (= # of local dofs): {uh.x.petsc_vec.sizes[0]}")
 mpi_print(f"Size of uh.x (= # of local + ghost dofs): {uh.x.array.size}")
 # %%

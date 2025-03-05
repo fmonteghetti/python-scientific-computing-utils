@@ -137,7 +137,7 @@ u_out = dolfinx.fem.Function(V)
 for i in range(len(eigval)):
     name = f"{i:02d}_{eigval[i]:4.4g}"
         # eigvec_r[i] contains only the local dofs, not the ghost dofs
-    u_out.vector.setArray(eigvec_r[i])
+    u_out.x.petsc_vec.setArray(eigvec_r[i])
     u_out.x.scatter_forward()
     grid.point_data[name+"_ur"] = u_out.x.array.copy()
 grid.save(f"square_{bc_hor}-{bc_vert}_fenicsx_{comm.rank}.vtu")

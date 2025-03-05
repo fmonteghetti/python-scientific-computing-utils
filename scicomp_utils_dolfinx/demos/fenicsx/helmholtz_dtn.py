@@ -181,7 +181,7 @@ solver.setOperators(A)
 solver.setType(PETSc.KSP.Type.PREONLY)
 solver.getPC().setType(PETSc.PC.Type.LU)
 uh = dolfinx.fem.Function(V)
-solver.solve(L, uh.vector)
+solver.solve(L, uh.x.petsc_vec)
 uh.x.scatter_forward()
 
 comm.Barrier()
@@ -197,7 +197,7 @@ L2_error = dolfinx.fem.assemble_scalar(L2_error)
 L2_error = np.sqrt(comm.allreduce(L2_error, op=MPI.SUM))
 
 if comm.rank==0:
-    print(f"DoF : {uh.vector.size}")
+    print(f"DoF : {uh.x.petsc_vec.size}")
     print(f"Error_L2 : {L2_error:.2e}")
     # Export uh to a single XDMF file (currently supports only one function)
 with dolfinx.io.XDMFFile(mesh.comm, "shared/demo_helmholtz_dtn.xdmf", "w") as file:

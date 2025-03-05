@@ -68,16 +68,16 @@ def periodic_relation(x):
 V = dolfinx.fem.functionspace(dmesh.mesh, ("CG", mesh_order, (dmesh.mesh.geometry.dim,)))
     # Same dirichlet boundary condition on u and v
 # uD = dolfinx.Function(V)
-# uD.vector.setArray(0)
-# uD.vector.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
+# uD.x.petsc_vec.setArray(0)
+# uD.x.petsc_vec.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
 # bcs = fenicsx_utils.create_DirichletBC(dmesh.mesh,dmesh.facet_tags,V,[uD],Gamma_u)
     # Different Dirichlet boundary condiions on u and v
 uD = dolfinx.fem.Function(V.sub(0).collapse()[0])
-uD.vector.setArray(0)
-uD.vector.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
+uD.x.petsc_vec.setArray(0)
+uD.x.petsc_vec.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
 vD = dolfinx.fem.Function(V.sub(1).collapse()[0])
-vD.vector.setArray(0)
-vD.vector.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
+vD.x.petsc_vec.setArray(0)
+vD.x.petsc_vec.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
 bcs = fenicsx_utils.create_DirichletBC(dmesh.mesh,dmesh.facet_tags,V,[uD,vD],[Gamma_u,Gamma_v],idx_sub_space=[0,1])
     # Periodic boundary condition through MultiPointContraint object
     # - Slave DoF are removed from the solved system

@@ -59,8 +59,8 @@ V = dolfinx.fem.functionspace(dmesh.mesh, ("CG", 1))
     # Dirichlet boundary condition
 x = V.tabulate_dof_coordinates()
 uD = dolfinx.fem.Function(V)
-uD.vector.setArray(0*x[:,0])
-uD.vector.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
+uD.x.petsc_vec.setArray(0*x[:,0])
+uD.x.petsc_vec.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
 bcs = fenicsx_utils.create_DirichletBC(dmesh.mesh,dmesh.facet_tags,V,[uD,uD],Dirichlet_bnd)
     # Periodic boundary condition through MultiPointContraint object
     # - Slave DoF are removed from the solved system
@@ -125,10 +125,10 @@ grid = fenicsx_utils.create_pyvista_UnstructuredGrid_from_mesh(dmesh.mesh)
 # pv.set_plot_theme("document")
 colormap = 'viridis'
 u_h = dolfinx.fem.Function(V)
-u_h.vector.setArray(uh.array)
+u_h.x.petsc_vec.setArray(uh.array)
 u_h.name = "u_mpc"
 grid.clear_data()
-grid.point_data["u"] = u_h.vector.array.real
+grid.point_data["u"] = u_h.x.petsc_vec.array.real
 grid.set_active_scalars("u")
 plotter = pv.Plotter(shape=(1, 1))
 colorbar_args = dict(vertical=True,height=0.8,position_x=0.9, position_y=0.1,

@@ -43,7 +43,7 @@ V = dolfinx.fem.functionspace(mesh, CG)
 def Dirichlet_bnd(x):
     return np.isclose(x[0], 0.0)
 uD = dolfinx.fem.Function(V)
-uD.vector.set(0)
+uD.x.petsc_vec.set(0)
 
 facets = dolfinx.mesh.locate_entities_boundary(mesh, 0, Dirichlet_bnd)
 dof = dolfinx.fem.locate_dofs_topological(V, 0, facets)
@@ -57,8 +57,8 @@ def Omega_0(x):
 def Omega_1(x):
     return x[:,0] >= L_int
 x = V.tabulate_dof_coordinates()
-kappa.vector.setArray(kappa_0*Omega_0(x)+kappa_1*Omega_1(x))
-kappa.vector.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
+kappa.x.petsc_vec.setArray(kappa_0*Omega_0(x)+kappa_1*Omega_1(x))
+kappa.x.petsc_vec.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
     # Measure on whole domain
 dx = ufl.dx
     # Weak formulation

@@ -81,9 +81,9 @@ uD = dolfinx.fem.Function(V)
     # Don't use interpolation
 x = V.tabulate_dof_coordinates()
 y = 1+x[:,0]**2+2*x[:,1]**2
-uD.vector.setArray(y)
+uD.x.petsc_vec.setArray(y)
     # Set up Dirichlet boundary condition
-uD.vector.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
+uD.x.petsc_vec.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
 bcs = fenicsx_utils.create_DirichletBC(dmesh.mesh,dmesh.facet_tags,V,[uD],[phys_tag_1D['Gamma-ext']])
     # Weak formulation
 u = ufl.TrialFunction(V)

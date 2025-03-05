@@ -136,10 +136,10 @@ class PeriodicBoundary():
             # in multi-threaded execution
         f = dolfinx.fem.Function(self.__mpc.function_space)
         for i in range(len(v_list)):
-            f.vector.setArray(v_list[i])
+            f.x.petsc_vec.setArray(v_list[i])
             f.x.scatter_forward()
-            self.__mpc.backsubstitution(f.vector)
-            v_list[i] = f.vector.copy()
+            self.__mpc.backsubstitution(f.x.petsc_vec)
+            v_list[i] = f.x.petsc_vec.copy()
         
     def get_MultiPointConstraint(self):
         """
