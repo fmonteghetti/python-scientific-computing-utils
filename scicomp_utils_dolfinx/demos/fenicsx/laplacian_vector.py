@@ -65,7 +65,7 @@ def periodic_relation(x):
     out_x[2] = x[2]
     return out_x
 #%% Weak formulation
-V = dolfinx.fem.VectorFunctionSpace(dmesh.mesh, ("CG", mesh_order))
+V = dolfinx.fem.functionspace(dmesh.mesh, ("CG", mesh_order, (dmesh.mesh.geometry.dim,)))
     # Same dirichlet boundary condition on u and v
 # uD = dolfinx.Function(V)
 # uD.vector.setArray(0)

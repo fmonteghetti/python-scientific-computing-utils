@@ -109,7 +109,7 @@ Gamma_DtN_tags = [t for name in DtN_name for t in name_2_tags[1][name]]
     # == Weak formulation a(u,v) + a_DtN(u,v) = l(u,v) with v in H^1
     # Build distributed function space
 t0=time.process_time_ns()
-V = dolfinx.fem.FunctionSpace(mesh, ("CG", degree_fem))
+V = dolfinx.fem.functionspace(mesh, ("CG", degree_fem))
 u, v = ufl.TrialFunction(V), ufl.TestFunction(V)
 x = ufl.SpatialCoordinate(dmesh.mesh)
 uD = dolfinx.fem.Function(V)

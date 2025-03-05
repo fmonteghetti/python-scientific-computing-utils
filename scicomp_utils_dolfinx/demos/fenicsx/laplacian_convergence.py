@@ -71,7 +71,7 @@ plotter.add_text(f"{gmshfile}\nNodes: {dmesh.mesh.geometry.x.shape[0] }", positi
 plotter.view_xy()
 plotter.show()
 #%% Weak formulation
-V = dolfinx.fem.FunctionSpace(dmesh.mesh, ("CG", 2))
+V = dolfinx.fem.functionspace(dmesh.mesh, ("CG", 2))
 FE_name = V.element.signature()
     # Dirichlet boundary condition
 uD = dolfinx.fem.Function(V)

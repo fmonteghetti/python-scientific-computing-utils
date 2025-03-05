@@ -17,7 +17,9 @@ and piecewise coefficient:
 #%%
 import numpy as np
 import ufl
+import basix
 import dolfinx
+import dolfinx.fem.petsc
 from scicomp_utils_dolfinx import fenicsx_utils
 from mpi4py import MPI
 from petsc4py import PETSc
@@ -35,8 +37,8 @@ kappa_1 = 1
 
     # Mesh and function space
 mesh = dolfinx.mesh.create_interval(MPI.COMM_WORLD, N, [0,L])
-CG = ufl.FiniteElement("CG", mesh.ufl_cell(), degree=degree)
-V = dolfinx.fem.FunctionSpace(mesh, CG)
+CG = basix.ufl.element("CG", mesh.ufl_cell().cellname(), degree=degree)
+V = dolfinx.fem.functionspace(mesh, CG)
     # Dirichlet boundary conditions at x=0
 def Dirichlet_bnd(x):
     return np.isclose(x[0], 0.0)

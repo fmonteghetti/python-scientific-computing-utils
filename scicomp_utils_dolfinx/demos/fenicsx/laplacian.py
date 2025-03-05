@@ -35,6 +35,7 @@ from slepc4py import SLEPc
 import pyvista as pv
 import numpy as np
 import time
+import basix
 import dolfinx
 import dolfinx.fem.petsc
 import ufl
@@ -72,7 +73,7 @@ Gamma_tags = [t for name in Gamma_name for t in name_2_tags[-2][name]]
     # == Weak formulation a(u,v) = l(u,v) with v in H^1
     # Build distributed function space
 t0=time.process_time_ns()
-V = dolfinx.fem.FunctionSpace(mesh, ("CG", degree_fem))
+V = dolfinx.fem.functionspace(mesh, ("CG", degree_fem))
 u, v = ufl.TrialFunction(V), ufl.TestFunction(V)
 x = ufl.SpatialCoordinate(dmesh.mesh)
 uD = dolfinx.fem.Function(V)
@@ -125,9 +126,11 @@ grid.save(f"shared/demo_laplace_direct_{comm.rank}.vtu")
     # == Mixed formulation a((phi,u),(psi,v)) = l((psi,v)) 
     # with (psi,u) in H(div)xL^2
 t0=time.process_time_ns()
-BDM = ufl.FiniteElement("BDM", dmesh.mesh.ufl_cell(), degree=degree_fem)
-DG = ufl.FiniteElement("DG", dmesh.mesh.ufl_cell(), degree=degree_fem-1)
-W = dolfinx.fem.FunctionSpace(dmesh.mesh, BDM * DG)
+# BDM = ufl.FiniteElement("BDM", dmesh.mesh.ufl_cell(), degree=degree_fem)
+# DG = ufl.FiniteElement("DG", dmesh.mesh.ufl_cell(), degree=degree_fem-1)
+BDM = basix.ufl.element("BDM", dmesh.mesh.ufl_cell().cellname(), degree=degree_fem)
+DG = basix.ufl.element("DG", dmesh.mesh.ufl_cell().cellname(), degree=degree_fem-1)
+W = dolfinx.fem.functionspace(dmesh.mesh, basix.ufl.mixed_element([BDM,DG]))
 V_phi, V_u = W.sub(0).collapse()[0], W.sub(1).collapse()[0]
 trial_vec, test_vec = ufl.TrialFunctions(W), ufl.TestFunctions(W)
 phi, u = trial_vec[0], trial_vec[1]
@@ -151,7 +154,7 @@ phih, uh = Uh.sub(0).collapse(), Uh.sub(1).collapse()
 grid = fenicsx_utils.create_pyvista_UnstructuredGrid_from_FunctionSpace(V_u)
 grid.point_data["u"] = uh.x.array
     # Project phi in [L^2]^dim
-V_proj = dolfinx.fem.VectorFunctionSpace(mesh, ("DG", degree_fem-1))
+V_proj = dolfinx.fem.functionspace(mesh, ("DG", degree_fem-1, (dmesh.mesh.geometry.dim,)))
 phih_proj = fenicsx_utils.project(phih, V_proj,
                       petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 grid.point_data["phi"] = np.reshape(phih_proj.x.array.real,(-1,dim))

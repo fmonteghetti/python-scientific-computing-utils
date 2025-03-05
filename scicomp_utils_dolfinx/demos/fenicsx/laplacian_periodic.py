@@ -53,7 +53,7 @@ if comm.rank==0: # generate mesh on first thread only
                                              'N_x': 100, 'N_y': 100})
 comm.Barrier()
 dmesh = fenicsx_utils.DolfinxMesh.init_from_gmsh(gmshfile,2,comm=comm)
-V = dolfinx.fem.FunctionSpace(dmesh.mesh, ("CG", 2))
+V = dolfinx.fem.functionspace(dmesh.mesh, ("CG", 2))
 
     # Horizontal pbc
 pbc_slave_tag_hor = dmesh.name_2_tags[-2]['Rectangle-Boundary-Left']

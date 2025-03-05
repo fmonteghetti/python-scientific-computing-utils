@@ -59,7 +59,7 @@ def map_RectLeftBnd_to_DiskBnd(x):
     return y
 pbc_slave_to_master_map.append(map_RectLeftBnd_to_DiskBnd)
 #%% Weak formulation
-V = dolfinx.fem.FunctionSpace(dmesh.mesh, ("CG", 1))
+V = dolfinx.fem.functionspace(dmesh.mesh, ("CG", 1))
     # Dirichlet boundary condition
 x = V.tabulate_dof_coordinates()
 uD = dolfinx.fem.Function(V)
