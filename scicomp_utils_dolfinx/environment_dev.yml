@@ -4,11 +4,11 @@ channels:
   - defaults
 dependencies: # pkg_name=version=build
   - petsc=3.*=complex*
-  - petsc4py=3.19.*
+  - petsc4py=3.*
   - mpich=4.2.*
-  - fenics-dolfinx=0.6.0 # Also working: 0.7.1, 0.7.2, 0.7.3, 0.8.0
-  - dolfinx_mpc=0.6.1
-  - libdolfinx_mpc=0.6.1
+  - fenics-dolfinx=0.7.* # Also working: 0.7.1, 0.7.2, 0.7.3, 0.8.0
+  - dolfinx_mpc=0.7.*
+  - libdolfinx_mpc=0.7.*
   - pytest=8.2.*
   - matplotlib=3.9.*
   - scipy=1.14.*

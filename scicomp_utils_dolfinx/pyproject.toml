@@ -17,7 +17,7 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
 ]
-dependencies = ['fenics-dolfinx<=0.6',
+dependencies = ['fenics-dolfinx<=0.7.3',
                 'matplotlib',
                 'scipy',
                 'pyvista',

@@ -36,6 +36,7 @@ import pyvista as pv
 import numpy as np
 import time
 import dolfinx
+import dolfinx.fem.petsc
 import ufl
 from scicomp_utils_mesh import gmsh_utils
 from scicomp_utils_dolfinx import gmsh_utils_fenicsx
@@ -160,7 +161,7 @@ t0 = time.process_time_ns()
 u, v = ufl.TrialFunction(V), ufl.TestFunction(V)
 a = ufl.inner(ufl.grad(u), ufl.grad(v)) * dmesh.dx
 b = ufl.inner(u, v) * dmesh.dx
-uD.x.set(PETSc.ScalarType(0))
+uD.x.array[:] = PETSc.ScalarType(0)
 bcs = fenicsx_utils.create_DirichletBC(dmesh.mesh,dmesh.facet_tags,V,[uD],Gamma_tags)
 (A,B) = fenicsx_utils.assemble_GEP(a,b,bcs)
 EPS = SLEPc_utils.solve_GEP_shiftinvert(A,B,comm=comm,

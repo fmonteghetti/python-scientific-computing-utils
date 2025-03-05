@@ -24,6 +24,7 @@ from scicomp_utils_misc import SLEPc_utils
 from mpi4py import MPI
     # Dolfinx
 import dolfinx
+import dolfinx.fem.petsc
 import ufl
 from scicomp_utils_dolfinx import fenicsx_utils
     # Mesh
@@ -114,7 +115,7 @@ colormap = 'viridis'
 # colormap = 'hsv'
 # colormap = 'jet'
 # colormap = 'turbo'
-grid.clear_arrays()
+grid.clear_data()
 grid.point_data["u"] = uh.x.array.real
 grid.set_active_scalars("u")
 plotter = pv.Plotter(shape=(1, 1))
@@ -130,7 +131,7 @@ plotter.show()
 #pv.save_meshio("result.vtk",grid)
 #%% Plot solution: alternative method
 # Create a pyvista barebone pyvista plotter, screenshot, matplotlib
-grid.clear_arrays()
+grid.clear_data()
 grid.point_data["u"] = uh.x.array.real
 grid.set_active_scalars("u")
 plotter = pv.Plotter(shape=(1, 1),window_size=[1000, 1000])
@@ -167,7 +168,7 @@ ax.plot(np.real(eigval),np.imag(eigval),marker='o',linestyle='none')
 ax.set_xlabel("$Re(\lambda)$")
 ax.set_ylabel("$Im(\lambda)$")
 ax = fig.add_subplot(1,2,2)
-grid.clear_arrays()
+grid.clear_data()
 grid.point_data["u"] = eigvec_r[i_plot].array/np.max(np.abs(eigvec_r[i_plot].array))
 grid.set_active_scalars("u")
 plotter = pv.Plotter(shape=(1, 1),window_size=[1000, 1000])
@@ -183,7 +184,7 @@ ax.set_ylabel('$y$')
 ax.grid(False)
 ax.set_aspect('equal') # orthonormal axis
 #%% Export all eigenmodes using pyvista
-grid.clear_arrays()
+grid.clear_data()
 for i in range(len(eigval)):
     name = f"l_{i}_{eigval[i]:4.4g}"
     print(name)

@@ -128,7 +128,7 @@ N = V.dofmap.index_map.size_global # Number of DoF per unknown
 Nb = V.dofmap.index_map_bs # No. of unknowns
 idx = lambda i: slice(i,Nb*N,Nb) # Indices of unknown no. i
 grid = fenicsx_utils.create_pyvista_UnstructuredGrid_from_mesh(dmesh.mesh)
-grid.clear_arrays()
+grid.clear_data()
 for i in range(len(eigval)):
     name = f"{i:3d}_k_{eigval[i]:1.3e}_u"
     tmp = eigvec_r[i].array[idx(0)]  

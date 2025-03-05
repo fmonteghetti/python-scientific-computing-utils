@@ -15,12 +15,12 @@ from petsc4py import PETSc
 
 def create_pyvista_UnstructuredGrid_from_mesh(mesh):
     """ Create pyvista.UnstructuredGrid from dolfinx.cpp.mesh.Mesh """
-    topology, cell_types, x = dolfinx.plot.create_vtk_mesh(mesh, mesh.topology.dim)
+    topology, cell_types, x = dolfinx.plot.vtk_mesh(mesh, mesh.topology.dim)
     return pv.UnstructuredGrid(topology, cell_types, x)
 
 def create_pyvista_UnstructuredGrid_from_FunctionSpace(V):
     """ Create pyvista.UnstructuredGrid from dolfinx.fem.function.FunctionSpace """
-    topology, cell_types, x = dolfinx.plot.create_vtk_mesh(V)
+    topology, cell_types, x = dolfinx.plot.vtk_mesh(V)
     return pv.UnstructuredGrid(topology, cell_types, x)
 
 class DolfinxMesh():

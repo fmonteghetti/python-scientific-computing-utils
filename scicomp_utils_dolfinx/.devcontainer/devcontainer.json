@@ -3,7 +3,7 @@
         "dockerfile": "Dockerfile",
         "target": "complex",
         "args": {
-            "TAG": "v0.6.1.post1",
+            "TAG": "v0.7.2",
             "USER_NAME": "fenicsx",
             "USER_UID": "1000",
             "USER_GID": "1000",          

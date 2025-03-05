@@ -25,6 +25,7 @@ import pyvista as pv
 import numpy as np
 import time
 import dolfinx
+import dolfinx.fem.petsc
 import ufl
 from scicomp_utils_mesh import gmsh_utils
 from scicomp_utils_dolfinx import gmsh_utils_fenicsx

@@ -78,7 +78,7 @@ def pbc_rel_vert(x):
 bcs = []
 x = V.tabulate_dof_coordinates()
 uD = dolfinx.fem.Function(V)
-uD.x.set(PETSc.ScalarType(0))
+uD.x.array[:] = PETSc.ScalarType(0)
 uD.x.scatter_forward()
 bcs = []
 if bc_vert=="dirichlet":
