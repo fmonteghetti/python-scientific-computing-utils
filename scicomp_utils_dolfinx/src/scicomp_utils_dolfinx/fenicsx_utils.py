@@ -9,7 +9,6 @@ import dolfinx.plot
 import ufl
 from scicomp_utils_misc import PETSc_utils
 from scicomp_utils_mesh import gmsh_utils 
-from scicomp_utils_dolfinx import gmsh_utils_fenicsx
 import pyvista as pv
 from petsc4py import PETSc
 
@@ -58,7 +57,7 @@ class DolfinxMesh():
             MPI communicator. The default is MPI.COMM_WORLD.
         """
         mesh, cell_tags, facet_tags = \
-            gmsh_utils_fenicsx.gmsh_mesh_to_mesh(gmshfile, dim,comm=comm)
+            dolfinx.io.gmshio.read_from_msh(gmshfile,comm=comm,gdim=dim)
         if comm.rank == 0: # Read physical names and broacast them
             name_2_tags = gmsh_utils.getAllPhysicalNames(gmshfile, dim)
             comm.bcast(name_2_tags, root=0)
