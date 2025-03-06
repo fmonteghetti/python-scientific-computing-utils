@@ -212,11 +212,11 @@ def solve_GEP_shiftinvert(A,B,
 def EPS_get_spectrum(EPS):
     A = EPS.getOperators()[0]
         # Get results in lists
-    eigval = [EPS.getEigenvalue(i) for i in range(EPS.getConverged())]
+    eigval = [EPS.getEigenpair(i) for i in range(EPS.getConverged())]
     eigvec_r = list(); eigvec_i = list()
     vr = A.createVecRight(); vi = A.createVecRight()
     for i in range(EPS.getConverged()):
-        EPS.getEigenvector(i,vr,vi)
+        EPS.getEigenpair(i,vr,vi)
         eigvec_r.append(vr.copy())
         eigvec_i.append(vi.copy())
     # Sort by increasing real parts

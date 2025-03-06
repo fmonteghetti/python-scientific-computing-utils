@@ -13,6 +13,7 @@ slepc4py.init(sys.argv)
 from petsc4py import PETSc
 from slepc4py import SLEPc
 import numpy
+from scicomp_utils_misc import SLEPc_utils
 
 # -- PETSc matrix assembly
 opts = PETSc.Options()
@@ -97,3 +98,5 @@ if nconv > 0:
     else:
       Print( " %12f       %12g" % (k.real, error) )
   Print()
+
+(eigval,eigvec_r,eigvec_i) = SLEPc_utils.EPS_get_spectrum(E)
