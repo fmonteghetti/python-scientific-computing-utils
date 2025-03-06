@@ -208,6 +208,84 @@ def solve_GEP_shiftinvert(A,B,
     #     SLEPc_utils.EPS_print_results(EPS)   
     return EPS
 
+def solve_PEP_shiftinvert(A_list,
+                          problem_type=SLEPc.PEP.ProblemType.GENERAL,
+                          solver=SLEPc.PEP.Type.TOAR,
+                          nev=10,tol=1e-6,max_it=10,
+                          target=0.0,shift=0.0,
+                          comm=MPI.COMM_WORLD):
+    """
+    Solve polynomial eigenvalue problem 
+
+        A_0 + A_1*lambda + ... + A_d*lambda^d = 0
+
+    using shift-and-invert as spectral transform method.
+
+    Parameters
+    ----------
+    A_list : PETSc.Mat
+        Matrices A_0, ..., A_d
+    problem_type : SLEPc.PEP.ProblemType, optional
+    solver : SLEPc.PEP.Type, optional
+    nev : int, optional
+        Number of requested eigenvalues.
+    tol : float, optional
+        Tolerance.
+    max_it : int, optional
+        Maximum number of iterations.
+    target : float, optional
+        Target eigenvalue. Also used for sorting.
+    shift : float, optional
+        Shift 'sigma' used in shift-and-invert.
+    comm: mpi4py.MPI.Intracomm
+        MPI communicator. Default is to use all processes.
+    Returns
+    -------
+    eigval : list of complex
+        Converged eigenvalues.
+    eigvec_r : list of PETSc.Vec
+        Converged eigenvector (real_part)
+    eigvec_i : TYPE
+        Converged eigenvectors (imag_part)
+        
+    """
+    
+        # Build an Eigenvalue Problem Solver object
+    PEP = SLEPc.PEP(); PEP.create(comm=comm)
+    PEP.setOperators(A_list)
+    PEP.setProblemType(problem_type)
+        # set the number of eigenvalues requested
+    PEP.setDimensions(nev=nev)
+        # Set solver
+    PEP.setType(solver)
+        # set eigenvalues of interest
+    PEP.setWhichEigenpairs(SLEPc.PEP.Which.TARGET_MAGNITUDE)
+    PEP.setTarget(target) # sorting
+        # set tolerance and max iterations
+    PEP.setTolerances(tol=tol,max_it=max_it)    
+        # Set up shift-and-invert
+        # Only work if 'whichEigenpairs' is 'TARGET_XX'
+    ST=PEP.getST()
+    ST.setType(SLEPc.ST.Type.SINVERT)
+    ST.setShift(shift)        
+    PEP.setST(ST)
+        # set monitor
+    it_skip=1
+    if comm.rank==0:
+        PEP.setMonitor(lambda eps, it, nconv, eig, err :
+                       monitor_EPS_short(eps, it, nconv, eig, err,it_skip))
+        # parse command line options
+    PEP.setFromOptions()
+        # Display all options (including those of ST object)
+    # if comm.rank==0:
+    #     EPS.view()          
+    PEP.solve()
+    if comm.rank==0:
+        print('******************************')
+        # Print results
+    # if comm.rank==0:
+    #     SLEPc_utils.EPS_print_results(EPS)   
+    return PEP
 
 def EPS_get_spectrum(EPS):
     A = EPS.getOperators()[0]
