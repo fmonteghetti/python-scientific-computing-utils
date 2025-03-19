@@ -288,13 +288,29 @@ def solve_PEP_shiftinvert(A_list,
     return PEP
 
 def EPS_get_spectrum(EPS):
+    """EPS_get_spectrum
+
+    Parameters
+    ----------
+    EPS : SLEPc.EPS or SLEPc.PEP
+        SLEPc object holding eigenvalues and eigenvectors.
+
+    Returns
+    -------
+    eigval: list(SLEPc.ScalarType)
+        Converged eigenvalues.
+    eigvec_r: list(PETSc.Vec)
+        Real part of converged eigenvectors (if SLEPc.ScalarType=SLEPc.RealType)
+        or converged eigenvectors (if SLEPc.ScalarType=SLEPc.ComplexType).
+    eigvec_i: list(PETSc.Vec)
+        Imaginary part of converged eigenvectors (if SLEPc.ScalarType=SLEPc.RealType)
+        or zero vectors (if SLEPc.ScalarType=SLEPc.ComplexType).
+    """
     A = EPS.getOperators()[0]
-        # Get results in lists
-    eigval = [EPS.getEigenpair(i) for i in range(EPS.getConverged())]
-    eigvec_r = list(); eigvec_i = list()
+    eigval, eigvec_r, eigvec_i = list(), list(), list()
     vr = A.createVecRight(); vi = A.createVecRight()
     for i in range(EPS.getConverged()):
-        EPS.getEigenpair(i,vr,vi)
+        eigval.append(EPS.getEigenpair(i,vr,vi))
         eigvec_r.append(vr.copy())
         eigvec_i.append(vi.copy())
     # Sort by increasing real parts
