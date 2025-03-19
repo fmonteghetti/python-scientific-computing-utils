@@ -22,7 +22,7 @@ dependencies = ['fenics-dolfinx<=0.9.1',
                 'scipy',
                 'pyvista',
                 'scicomp_utils_mesh @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@1c02c2b8efd256a2533fb9ba70ca93e5d197746c#subdirectory=scicomp_utils_mesh',
-                'scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@69b634df9038f4dec5d1fe709a427f4b46e94767#subdirectory=scicomp_utils_misc'
+                'scicomp_utils_misc @ git+https://github.com/fmonteghetti/python-scientific-computing-utils/@2c5a239636b659607f5f5f1d1d95fe0a953aca31#subdirectory=scicomp_utils_misc'
                 ]
 
 [project.urls]
