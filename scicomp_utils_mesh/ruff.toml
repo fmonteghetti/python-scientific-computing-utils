@@ -1,0 +1,25 @@
+# Configuration file for ruff
+
+line-length = 80
+indent-width = 4
+
+# Linting options
+[lint]
+select = [
+    # Pyflakes
+    "F",
+    # isort
+    "I",
+    #  NumPy specific rules
+    "NPY",
+    # pydocstyle (D)
+    "D",
+]
+
+ignore = [
+    "D103", # Missing docstring in public function
+]
+
+# Docstring convention
+[lint.pydocstyle]
+convention = "numpy"

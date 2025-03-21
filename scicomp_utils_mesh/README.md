@@ -28,6 +28,13 @@ To use it, in the command palette of VS code:
 
 - `Dev Containers: Open Folder in Container` and select root of this repository.
 
+# Development
+
+Format code with
+```
+ruff format
+```
+
 # License
 
 This package is distributed under the terms of the GPLv3 license.

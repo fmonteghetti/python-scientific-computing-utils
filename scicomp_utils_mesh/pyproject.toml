@@ -19,6 +19,14 @@ classifiers = [
 ]
 dependencies = ['gmsh','numpy','meshio']
 
+# Extras (additional dependencies)
+[project.optional-dependencies]
+
+# Dependencies for development
+dev = [
+  "ruff>=0.6.3"
+]
+
 [project.urls]
 Documentation = "https://github.com/fmonteghetti/python-scientific-computing-utils/scicomp_utils_mesh#readme"
 Issues = "https://github.com/fmonteghetti/python-scientific-computing-utils/issues"
