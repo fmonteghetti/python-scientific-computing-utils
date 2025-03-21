@@ -1,12 +1,13 @@
 ########################################################
 ## Mesh circle (0,R)
 # Mesh 1: unstructured (x,y)
-# Mesh 2: unstructured (x,y) + Euler (z,theta) 
+# Mesh 2: unstructured (x,y) + Euler (z,theta)
 ########################################################
 
 import gmsh
 import sys
 import math as mt
+
 pi = mt.pi
 
 gmsh.initialize()
@@ -15,14 +16,13 @@ gmsh.option.setNumber("General.Terminal", 1)
 
 gmsh.model.add("circle")
 
-R = 1;
-lc = 1e-1;
-p_center = gmsh.model.occ.addPoint(0, 0, 0,lc);
-p_start = gmsh.model.occ.addPoint(R, 0, 0,lc);
-l_circle = gmsh.model.occ.addCircle(0, 0, 0, R);
-l_circleLoop = gmsh.model.occ.addCurveLoop([l_circle]);
-s_disk = gmsh.model.occ.addPlaneSurface([l_circleLoop]);
-
+R = 1
+lc = 1e-1
+p_center = gmsh.model.occ.addPoint(0, 0, 0, lc)
+p_start = gmsh.model.occ.addPoint(R, 0, 0, lc)
+l_circle = gmsh.model.occ.addCircle(0, 0, 0, R)
+l_circleLoop = gmsh.model.occ.addCurveLoop([l_circle])
+s_disk = gmsh.model.occ.addPlaneSurface([l_circleLoop])
 gmsh.model.occ.synchronize()
 tmp = gmsh.model.addPhysicalGroup(1, [l_circleLoop])
 gmsh.model.setPhysicalName(1, tmp, "Boundary")
@@ -63,15 +63,7 @@ log = gmsh.logger.get()
 gmsh.logger.stop()
 
 print("Logger has recorded " + str(len(log)) + " lines")
-print(*log, sep = "\n") 
+print(*log, sep="\n")
 
 
 gmsh.finalize()
-    
-
-
-
-
-
-
-
