@@ -3,12 +3,14 @@
 Utility functions for petsc4py.
 
 """
+
 import numpy as np
 import scipy.sparse as sp
 from petsc4py import PETSc
 
-def kron_vector(L,result=None):
-    """Compute the matrix A_{ij} = L_i*L_j, where L is a vector. 
+
+def kron_vector(L, result=None):
+    """Compute the matrix A_{ij} = L_i*L_j, where L is a vector.
 
     Parameters
     ----------
@@ -17,66 +19,69 @@ def kron_vector(L,result=None):
         Return matrix, by default None
     """
     comm = L.getComm()
-    (n,N) = L.getSizes()
-        # Local values of L
+    (n, N) = L.getSizes()
+    # Local values of L
     L_l = L.getArray(readonly=True)
     L_l_idx_nnz = L_l.nonzero()[0].astype(PETSc.IntType)
-    L_l_nnz = L_l_idx_nnz.size 
-        # Scatter all values of L to all process
+    L_l_nnz = L_l_idx_nnz.size
+    # Scatter all values of L to all process
     L_g_vec = PETSc.Vec().createSeq(L.size)
-    idx = PETSc.IS().createStride(N,first=0,step=1,comm=comm)
-    sct = PETSc.Scatter().create(L,idx,L_g_vec,idx)
-    sct.scatter(L,L_g_vec) # Lg_vec[:] = L[:]
-        # Local vector holding all the values of L
+    idx = PETSc.IS().createStride(N, first=0, step=1, comm=comm)
+    sct = PETSc.Scatter().create(L, idx, L_g_vec, idx)
+    sct.scatter(L, L_g_vec)  # Lg_vec[:] = L[:]
+    # Local vector holding all the values of L
     L_g = L_g_vec.getArray(readonly=True)
     L_g_idx_nnz = L_g.nonzero()[0].astype(PETSc.IntType)
     L_g_nnz = L_g_idx_nnz.size
     A = result
-    if A==None: # create A and pre-allocate
+    if A == None:  # create A and pre-allocate
         A = PETSc.Mat()
         A.create(comm)
-        A.setSizes(((n,N),(n,N)))
+        A.setSizes(((n, N), (n, N)))
         A.setFromOptions()
-        d_nnz = np.zeros(n,dtype=PETSc.IntType)
+        d_nnz = np.zeros(n, dtype=PETSc.IntType)
         d_nnz[L_l_idx_nnz] = L_l_nnz
-        o_nnz = np.zeros(n,dtype=PETSc.IntType)
+        o_nnz = np.zeros(n, dtype=PETSc.IntType)
         o_nnz[L_l_idx_nnz] = L_g_nnz - L_l_nnz
-        A.setPreallocationNNZ((d_nnz,o_nnz))
-    if L_l_nnz!=0: # non-null contribution to L 
+        A.setPreallocationNNZ((d_nnz, o_nnz))
+    if L_l_nnz != 0:  # non-null contribution to L
         rows = A.getOwnershipRange()
-        I,J = L_l_idx_nnz.view(), L_g_idx_nnz.view()
-        I += rows[0] # local to global
-        V=np.kron(L_g[I],L_g[J])
-        A.setValues(I,J,V)
+        I, J = L_l_idx_nnz.view(), L_g_idx_nnz.view()
+        I += rows[0]  # local to global
+        V = np.kron(L_g[I], L_g[J])
+        A.setValues(I, J, V)
     A.assemblyBegin()
     A.assemblyEnd()
     return A
 
-def convert_scipy_to_PETSc(A,comm=None):
+
+def convert_scipy_to_PETSc(A, comm=None):
     """
     Convert from scipy sparse to PETSc sparse.
 
     Parameters
     ----------
     A : scipy.sparse matrix
-        
+
     comm : MPI communicator PETSc.Comm, optional
-        
+
     Returns
     -------
     A_petsc : PETSc.Mat
-    
+
     """
-    if A.format!="csr":
+    if A.format != "csr":
         A_csr = A.tocsr(copy=False)
     else:
         A_csr = A
-        
-    A_petsc = PETSc.Mat().createAIJ(size=A_csr.shape,
-                                   csr=(A_csr.indptr, A_csr.indices,
-                                       A_csr.data),comm=comm)
-    return A_petsc 
-    
+
+    A_petsc = PETSc.Mat().createAIJ(
+        size=A_csr.shape,
+        csr=(A_csr.indptr, A_csr.indices, A_csr.data),
+        comm=comm,
+    )
+    return A_petsc
+
 
 def convert_PETSc_to_scipy(A):
     """
@@ -90,12 +95,13 @@ def convert_PETSc_to_scipy(A):
     Returns
     -------
     A_scipy : scipy.sparse.csr.csr_matrix
-        
+
 
     """
-    (indptr,indices,val) = A.getValuesCSR()
+    (indptr, indices, val) = A.getValuesCSR()
     A_scipy = sp.csr_matrix((val, indices, indptr), shape=A.size)
     return A_scipy
+
 
 def set_diagonal_entries(A):
     """
@@ -108,38 +114,42 @@ def set_diagonal_entries(A):
 
     """
 
-    x=A.createVecRight(); x.setArray(0)
-    A.setOption(PETSc.Mat.Option.NEW_NONZERO_ALLOCATION_ERR,False)
-    A.setDiagonal(x,addv=True)
-    A.setOption(PETSc.Mat.Option.NEW_NONZERO_ALLOCATION_ERR,True)
+    x = A.createVecRight()
+    x.setArray(0)
+    A.setOption(PETSc.Mat.Option.NEW_NONZERO_ALLOCATION_ERR, False)
+    A.setDiagonal(x, addv=True)
+    A.setOption(PETSc.Mat.Option.NEW_NONZERO_ALLOCATION_ERR, True)
+
 
 def get_cleared_options_db():
-    """ Clear the option database and return a pointer to it. """
-    OptDB = PETSc.Options() # pointer to THE option database
-    for key in OptDB.getAll(): OptDB.delValue(key) # Clear database
+    """Clear the option database and return a pointer to it."""
+    OptDB = PETSc.Options()  # pointer to THE option database
+    for key in OptDB.getAll():
+        OptDB.delValue(key)  # Clear database
     return OptDB
 
 
-def options_db_clear_prefix(OptDB,prefix):
-    """ Remove parameters with given prefix from options database. 
-    prefix: string (e.g. 'ts', 'ksp') """
+def options_db_clear_prefix(OptDB, prefix):
+    """Remove parameters with given prefix from options database.
+    prefix: string (e.g. 'ts', 'ksp')"""
     P = len(prefix)
-    idx = slice(0,P)
+    idx = slice(0, P)
     for key in OptDB.getAll():
-        if (len(key)>=P) and key[idx]==prefix:
+        if (len(key) >= P) and key[idx] == prefix:
             OptDB.delValue(key)
 
-def options_db_set_all(OptDB,entries):
-    """ Set all entires in dictionary entries in options database. """
-    for key,val in entries.items():
-        OptDB.setValue(key,val)
+
+def options_db_set_all(OptDB, entries):
+    """Set all entires in dictionary entries in options database."""
+    for key, val in entries.items():
+        OptDB.setValue(key, val)
 
 
 ######################### PETSc TS ###########################################
-# 
+#
 # DAE time-integration guidelines
 # --------------------------------
-# 
+#
 #   1 General guidelines
 #   ---------------------
 # - DAE can be viewed as an 'infinitely stiff' ODE. Suitable schemes:
@@ -157,140 +167,149 @@ def options_db_set_all(OptDB,entries):
 #   -> Lagrange parameters (or even all algebraic variables) should be excluded
 # from Local Truncation Error, otherwise time adaption fails.
 #   -> Ensure ts_rtol and ts_atol have sensible values.
-# - Rosenberg-W schemes such as 'ra34pw2' gives excellent performance 
-# and accuracy for DAE, see 
-# [S. Abhyankar, E. Constantinescu, and A. Flueck. 2017. Variable-step 
-# multi-stage integration methods for fast and accurate power system dynamics 
+# - Rosenberg-W schemes such as 'ra34pw2' gives excellent performance
+# and accuracy for DAE, see
+# [S. Abhyankar, E. Constantinescu, and A. Flueck. 2017. Variable-step
+# multi-stage integration methods for fast and accurate power system dynamics
 # simulation. IREP'17.]
-# 
+#
 #   2 Relevant TS and SNES options
-#   ------------------------------   
-    # Newton iteration (nonlinear solve)
+#   ------------------------------
+# Newton iteration (nonlinear solve)
 # OptDB["snes_atol"] = 1e-6
 # OptDB["snes_rtol"] = 1e-6
 # OptDB["snes_stol"] = 1e-6
-# OptDB["snes_max_it"] = 1 
+# OptDB["snes_max_it"] = 1
 # OptDB["snes_max_funcs"] = 10
 # OptDB["snes_lag_jacobian"] = 5
 # OptDB["snes_lag_jacobian_persists"] = True
-    # Time-stepping tolerance
+# Time-stepping tolerance
 # OptDB["ts_rtol"] = 1e-4
 # OptDB["ts_atol"] = 1e-4
-    # Time step adaption
+# Time step adaption
 # OptDB["ts_max_snes_failures"] = -1 # avoids failure with stiff problem
 # OptDB["ts_max_reject"] = 5 # -1 for unlimited
 # OptDB["ts_adapt_type"] = "basic"/"dsp"/"none"
-    # Low-order implicit scheme
+# Low-order implicit scheme
 # OptDB["ts_type"] = "cn", "beuler"
-        # BDF
+# BDF
 # OptDB["ts_type"] = "bdf"
 # OptDB["ts_bdf_order"] = 2
-        # ARKIMEX schemes
+# ARKIMEX schemes
 # OptDB["ts_type"] = PETSc.TS.Type.ARKIMEX
 # OptDB["ts_equation_type"] = PETSc.TS.EquationType.IMPLICIT
 # OptDB["ts_type_arkimex"] = 'bpr3'
-        # Rosenberg-W linear implicit schemes
+# Rosenberg-W linear implicit schemes
 # OptDB["ts_type"] = PETSc.TS.Type.ROSW
 # OptDB["ts_equation_type"] = PETSc.TS.EquationType.IMPLICIT
 # OptDB["ts_type_rosw"] = "2p", "rodas3", "ra34pw2"
-    # Linear solver: GMRES
+# Linear solver: GMRES
 # OptDB["ksp_type"] = "gmres" # preonly, gmres
 # OptDB["pc_type"] = "jacobi" # none, jacobi, ilu, icc
-     # Linear solver: direct sparse solver
+# Linear solver: direct sparse solver
 # OptDB["ksp_type"] = "preonly"
 # OptDB["pc_type"] = "lu"
 # OptDB["pc_factor_mat_solver_type"] = "mumps"
 
 import time
 
+
 class Fully_implicit_DAE(object):
-    """ DAE under a fully implicit form F(t,y,yd) = 0 suitable for
-    integration with PETSc TS fully implicit schemes. """ 
-    
-    def __init__(self,N,name,idx_alg=None):
-        self.name = name        # str: name
-        self.N = N              # int: number of unknowns
+    """DAE under a fully implicit form F(t,y,yd) = 0 suitable for
+    integration with PETSc TS fully implicit schemes."""
+
+    def __init__(self, N, name, idx_alg=None):
+        self.name = name  # str: name
+        self.N = N  # int: number of unknowns
         self.idx_alg = idx_alg  # list(int): algebraic variables
-        self.F = 0              # PETSc.Vec(): vector used during time-integration
-        self.J = 0              # PETSc.Mat(): matrix used during time-integration
-           
+        self.F = 0  # PETSc.Vec(): vector used during time-integration
+        self.J = 0  # PETSc.Mat(): matrix used during time-integration
+
     def init(self):
-        """ Initialize. Call before new time integration. """
-            # History
+        """Initialize. Call before new time integration."""
+        # History
         self.init_history()
 
     def IFunction(self, ts, t, y, yd, F):
-        """ Evaluate residual vector F(t,y,yd)."""
+        """Evaluate residual vector F(t,y,yd)."""
         pass
-        
+
     def IJacobian(self, ts, t, y, yd, c, Amat, Pmat):
-        """ Evaluate jacobian matrix J = c*J_yd + J_y."""
+        """Evaluate jacobian matrix J = c*J_yd + J_y."""
         pass
-    
+
     def init_history(self):
-        """ Initialize history structure. """
-        self.history = dict(t=list(),y=list())
+        """Initialize history structure."""
+        self.history = dict(t=list(), y=list())
         self.t_start = 0
 
     def monitor(self, ts, i, t, y, dt_export=1):
-        """ Monitor to use during iterations. """
-        if self.history['t']:
-            lastt  = self.history['t'][-1]            
+        """Monitor to use during iterations."""
+        if self.history["t"]:
+            lastt = self.history["t"][-1]
         else:
-            lastt = t-2*dt_export
+            lastt = t - 2 * dt_export
             self.t_start = time.time()
-        if (t > lastt + dt_export) or (i==-1):
-            print(f"i={i:8d} t={t:8g} * dt={ts.getTimeStep():8g} ({int(time.time()-self.t_start)}s)")
-            self.history['t'].append(t)
-            self.history['y'].append(y.copy())
-        else: # (i<10): 
-            print(f"i={i:8d} t={t:8g}   dt={ts.getTimeStep():8g} ({int(time.time()-self.t_start)}s)")
-            
+        if (t > lastt + dt_export) or (i == -1):
+            print(
+                f"i={i:8d} t={t:8g} * dt={ts.getTimeStep():8g} ({int(time.time() - self.t_start)}s)"
+            )
+            self.history["t"].append(t)
+            self.history["y"].append(y.copy())
+        else:  # (i<10):
+            print(
+                f"i={i:8d} t={t:8g}   dt={ts.getTimeStep():8g} ({int(time.time() - self.t_start)}s)"
+            )
+
     def get_vector(self):
-        """ Get new residual-size vector. """
-        x = PETSc.Vec().createWithArray(np.zeros(self.N,))
+        """Get new residual-size vector."""
+        x = PETSc.Vec().createWithArray(
+            np.zeros(
+                self.N,
+            )
+        )
         return x
 
-def TS_exclude_var_from_lte(dae,ts):
-    """ Exclude algebraic variables from local truncation error. 
-    
+
+def TS_exclude_var_from_lte(dae, ts):
+    """Exclude algebraic variables from local truncation error.
+
     Inputs
     -------
     dae: Fully_implicit_DAE
-    
+
     ts: PETSc.TS
-    
+
     """
     atol = ts.getTolerances()[1]
-    atol_v = atol*np.ones((dae.N,))
-    atol_v[dae.idx_alg] = np.inf # inf for algebraic variables
+    atol_v = atol * np.ones((dae.N,))
+    atol_v[dae.idx_alg] = np.inf  # inf for algebraic variables
     atol_v_petsc = dae.get_vector()
     atol_v_petsc.setArray(atol_v)
     ts.setTolerances(atol=atol_v_petsc)
 
 
+def TS_integration_dae(
+    dae, x0, dt, tf, dt_export=None, cinit=False, cinit_dt=1e-2, cinit_nstep=1
+):
+    """Time-integration of DAE under fully implicit form F(t,y,yd)=0.
 
-
-def TS_integration_dae(dae,x0,dt,tf,dt_export=None,
-                        cinit=False,cinit_dt=1e-2,cinit_nstep=1):
-    """ Time-integration of DAE under fully implicit form F(t,y,yd)=0.
-    
     Inputs
     -------
     dae: Fully_implicit_DAE
-    
+
     x0: PETSc.Vec
         Initial condition. This vector is used throughout the time integration.
-        
+
     dt,tf: real
         Initial time step and final time.
-    
+
     dt_export: real (Optional)
         Time step for saving solution.
-        
+
     cinit, cinit_dt, cinit_nstep: bool, real, int
         Parameters related to consistent initialization.
-    
+
     """
     tc = 0
     if dt_export is None:
@@ -299,12 +318,13 @@ def TS_integration_dae(dae,x0,dt,tf,dt_export=None,
     monitor = lambda ts, i, t, x: dae.monitor(ts, i, t, x, dt_export=dt_export)
     OptDB = PETSc.Options()
     import time
-        # -- Consistent initialization
-    if cinit==True:
-            # Clear options related to ts and snes
+
+    # -- Consistent initialization
+    if cinit == True:
+        # Clear options related to ts and snes
         OptDB_bak = OptDB.getAll()
-        options_db_clear_prefix(OptDB,"ts")
-        options_db_clear_prefix(OptDB,"snes")
+        options_db_clear_prefix(OptDB, "ts")
+        options_db_clear_prefix(OptDB, "snes")
         ts = PETSc.TS().create()
         ts.setMonitor(monitor)
         ts.setIFunction(dae.IFunction, dae.F)
@@ -312,44 +332,52 @@ def TS_integration_dae(dae,x0,dt,tf,dt_export=None,
         ts.setMaxSNESFailures(-1)
         ts.setFromOptions()
         ts.setTime(0.0)
-        ts.setMaxTime(cinit_nstep*cinit_dt)
+        ts.setMaxTime(cinit_nstep * cinit_dt)
         ts.setTimeStep(cinit_dt)
         ts.setMaxSteps(cinit_nstep)
         ts.setExactFinalTime(PETSc.TS.ExactFinalTime.MATCHSTEP)
         ts.setType(PETSc.TS.Type.BEULER)
-        print(f"Consistent initialization: {cinit_nstep} step(s) of {ts.getType()}.")
+        print(
+            f"Consistent initialization: {cinit_nstep} step(s) of {ts.getType()}."
+        )
         start = time.time()
         ts.solve(x0)
         tc = ts.getTime()
-        print(f"Done (t={tc:8g}).\nElapsed time: {time.time()-start:1.4g}s")
+        print(f"Done (t={tc:8g}).\nElapsed time: {time.time() - start:1.4g}s")
         ts.destroy()
         del ts
-            # Restore user-defined options
-        options_db_set_all(OptDB,OptDB_bak)
+        # Restore user-defined options
+        options_db_set_all(OptDB, OptDB_bak)
         # -- Main integration
     ts = PETSc.TS().create()
     ts.setMonitor(monitor)
     ts.setIFunction(dae.IFunction, dae.F)
     ts.setIJacobian(dae.IJacobian, dae.J)
-            # Default options
+    # Default options
     ts.setTime(tc)
     ts.setMaxTime(tf)
-    OptDB['ts_dt'] = dt # initial time step
-    ts.setMaxSNESFailures(-1) # avoid unecessary divergence
+    OptDB["ts_dt"] = dt  # initial time step
+    ts.setMaxSNESFailures(-1)  # avoid unecessary divergence
     ts.setExactFinalTime(PETSc.TS.ExactFinalTime.MATCHSTEP)
-            # User-defined options
+    # User-defined options
     ts.setFromOptions()
     snes = ts.getSNES()
-            # Print some options    
+    # Print some options
     print(f"Scheme: {ts.getType()}")
     print(f"TS atol: {ts.atol:1.1e}, rtol:{ts.rtol:1.1e}")
-    print(f"SNES atol: {snes.atol:1.1e}, rtol:{snes.rtol:1.1e}, stol: {snes.stol}")
+    print(
+        f"SNES atol: {snes.atol:1.1e}, rtol:{snes.rtol:1.1e}, stol: {snes.stol}"
+    )
     print(f"SNES max_it: {snes.max_it:d}")
-    TS_exclude_var_from_lte(dae,ts)
-    start = time.time()    
+    TS_exclude_var_from_lte(dae, ts)
+    start = time.time()
     ts.solve(x0)
-    print(f"Elapsed time: {time.time()-start:1.4g}s")
-    print(f"Steps: {ts.getStepNumber()} ({ts.getStepRejections()} rejected, {ts.getSNESFailures()} Nonlinear solver failures)")
-    print(f"Nonlinear iterations: {ts.getSNESIterations()}, Linear iterations: {ts.getKSPIterations()}")
+    print(f"Elapsed time: {time.time() - start:1.4g}s")
+    print(
+        f"Steps: {ts.getStepNumber()} ({ts.getStepRejections()} rejected, {ts.getSNESFailures()} Nonlinear solver failures)"
+    )
+    print(
+        f"Nonlinear iterations: {ts.getSNESIterations()}, Linear iterations: {ts.getKSPIterations()}"
+    )
     ts.reset()
     ts.destroy()

@@ -49,11 +49,13 @@ PETSC_ERR_USER_INPUT       95  /* missing or incorrect user input */
 PETSC_ERR_GPU_RESOURCE     96  /* missing or incorrect user input */
 PETSC_ERR_MAX_VALUE        97  /* this is always the one more than the largest error code */
 """
+
 from mpi4py import MPI
 from slepc4py import SLEPc
 import numpy as np
 
-def monitor_EPS_short(EPS, it, nconv, eig, err,it_skip):
+
+def monitor_EPS_short(EPS, it, nconv, eig, err, it_skip):
     """
     Concise monitor for EPS.solve().
 
@@ -77,62 +79,68 @@ def monitor_EPS_short(EPS, it, nconv, eig, err,it_skip):
     None.
 
     """
-    if (it==1):
-        print('******************************')
-        print('***  SLEPc Iterations...   ***')
-        print('******************************')
+    if it == 1:
+        print("******************************")
+        print("***  SLEPc Iterations...   ***")
+        print("******************************")
         EPS_print_short(EPS)
         print("Iter. | Conv. | Max. error")
         print(f"{it:5d} | {nconv:5d} | {max(err):1.1e}")
-    elif not it%it_skip:
+    elif not it % it_skip:
         print(f"{it} | {nconv} | {max(err):1.1e}")
 
 
 def EPS_print_short(EPS):
     print(f"Problem dimension: {EPS.getOperators()[0].size[0]}")
     print(f"Solution method: '{EPS.getType()}' with '{EPS.getST().getType()}'")
-    nev,ncv = EPS.getDimensions()[0:2]
-    print( f"Number of requested eigenvalues: {nev}")
+    nev, ncv = EPS.getDimensions()[0:2]
+    print(f"Number of requested eigenvalues: {nev}")
     print(f"Number of MPI process: {EPS.comm.Get_size()}")
-    if ncv>0:
-        print(f'Subspace dimension: {ncv}')
+    if ncv > 0:
+        print(f"Subspace dimension: {ncv}")
     tol, maxit = EPS.getTolerances()
-    print( f"Stopping condition: tol={tol}, maxit={maxit}")
-    
+    print(f"Stopping condition: tol={tol}, maxit={maxit}")
+
 
 def EPS_print_results(EPS):
     print()
     print("******************************")
     print("*** SLEPc Solution Results ***")
-    print("******************************")           
+    print("******************************")
     its = EPS.getIterationNumber()
     print(f"Iteration number: {its}")
     nconv = EPS.getConverged()
-    print( f"Converged eigenpairs: {nconv}")
+    print(f"Converged eigenpairs: {nconv}")
 
     if nconv > 0:
-      # Create the results vectors
-      vr, vi = EPS.getOperators()[0].createVecs()
-      print()
-      print("Converged eigval.  Error ")
-      print("----------------- -------")
-      for i in range(nconv):
-        k = EPS.getEigenpair(i, vr, vi)
-        error = EPS.computeError(i)
-        if k.imag != 0.0:
-          print( f" {k.real:2.2e} + {k.imag:2.2e}j {error:1.1e}")
-        else:
-          print(f" {k.real:2.2e}         {error:1.1e}")
-      print()
+        # Create the results vectors
+        vr, vi = EPS.getOperators()[0].createVecs()
+        print()
+        print("Converged eigval.  Error ")
+        print("----------------- -------")
+        for i in range(nconv):
+            k = EPS.getEigenpair(i, vr, vi)
+            error = EPS.computeError(i)
+            if k.imag != 0.0:
+                print(f" {k.real:2.2e} + {k.imag:2.2e}j {error:1.1e}")
+            else:
+                print(f" {k.real:2.2e}         {error:1.1e}")
+        print()
 
 
-
-def solve_GEP_shiftinvert(A,B,
-                          problem_type=SLEPc.EPS.ProblemType.GNHEP,
-                          solver=SLEPc.EPS.Type.KRYLOVSCHUR,
-                          nev=10,tol=1e-6,max_it=10,
-                          target=0.0,shift=0.0,defl_space=[],
-                          comm=MPI.COMM_WORLD):
+def solve_GEP_shiftinvert(
+    A,
+    B,
+    problem_type=SLEPc.EPS.ProblemType.GNHEP,
+    solver=SLEPc.EPS.Type.KRYLOVSCHUR,
+    nev=10,
+    tol=1e-6,
+    max_it=10,
+    target=0.0,
+    shift=0.0,
+    defl_space=[],
+    comm=MPI.COMM_WORLD,
+):
     """
     Solve generalized eigenvalue problem A=lambda*B using shift-and-invert
     as spectral transform method.
@@ -164,58 +172,68 @@ def solve_GEP_shiftinvert(A,B,
         Converged eigenvector (real_part)
     eigvec_i : TYPE
         Converged eigenvectors (imag_part)
-        
+
     """
-    
-        # Build an Eigenvalue Problem Solver object
-    EPS = SLEPc.EPS(); EPS.create(comm=comm)
-    EPS.setOperators(A,B)
-        # (G)HEP = (Generalized) Hermitian
-        # (G)NHEP = (Generalized) Non-Hermitian
+
+    # Build an Eigenvalue Problem Solver object
+    EPS = SLEPc.EPS()
+    EPS.create(comm=comm)
+    EPS.setOperators(A, B)
+    # (G)HEP = (Generalized) Hermitian
+    # (G)NHEP = (Generalized) Non-Hermitian
     EPS.setProblemType(problem_type)
-        # set the number of eigenvalues requested
+    # set the number of eigenvalues requested
     EPS.setDimensions(nev=nev)
-        # Set solver
+    # Set solver
     EPS.setType(solver)
-        # set eigenvalues of interest
+    # set eigenvalues of interest
     EPS.setWhichEigenpairs(SLEPc.EPS.Which.TARGET_MAGNITUDE)
-    EPS.setTarget(target) # sorting
-        # set tolerance and max iterations
-    EPS.setTolerances(tol=tol,max_it=max_it)    
-        # deflation space
+    EPS.setTarget(target)  # sorting
+    # set tolerance and max iterations
+    EPS.setTolerances(tol=tol, max_it=max_it)
+    # deflation space
     EPS.setDeflationSpace(defl_space)
-        # Set up shift-and-invert
-        # Only work if 'whichEigenpairs' is 'TARGET_XX'
-    ST=EPS.getST()
+    # Set up shift-and-invert
+    # Only work if 'whichEigenpairs' is 'TARGET_XX'
+    ST = EPS.getST()
     ST.setType(SLEPc.ST.Type.SINVERT)
-    ST.setShift(shift)        
+    ST.setShift(shift)
     EPS.setST(ST)
-        # set monitor
-    it_skip=1
-    if comm.rank==0:
-        EPS.setMonitor(lambda eps, it, nconv, eig, err :
-                       monitor_EPS_short(eps, it, nconv, eig, err,it_skip))
+    # set monitor
+    it_skip = 1
+    if comm.rank == 0:
+        EPS.setMonitor(
+            lambda eps, it, nconv, eig, err: monitor_EPS_short(
+                eps, it, nconv, eig, err, it_skip
+            )
+        )
         # parse command line options
     EPS.setFromOptions()
-        # Display all options (including those of ST object)
+    # Display all options (including those of ST object)
     # if comm.rank==0:
-    #     EPS.view()          
+    #     EPS.view()
     EPS.solve()
-    if comm.rank==0:
-        print('******************************')
+    if comm.rank == 0:
+        print("******************************")
         # Print results
     # if comm.rank==0:
-    #     SLEPc_utils.EPS_print_results(EPS)   
+    #     SLEPc_utils.EPS_print_results(EPS)
     return EPS
 
-def solve_PEP_shiftinvert(A_list,
-                          problem_type=SLEPc.PEP.ProblemType.GENERAL,
-                          solver=SLEPc.PEP.Type.TOAR,
-                          nev=10,tol=1e-6,max_it=10,
-                          target=0.0,shift=0.0,
-                          comm=MPI.COMM_WORLD):
+
+def solve_PEP_shiftinvert(
+    A_list,
+    problem_type=SLEPc.PEP.ProblemType.GENERAL,
+    solver=SLEPc.PEP.Type.TOAR,
+    nev=10,
+    tol=1e-6,
+    max_it=10,
+    target=0.0,
+    shift=0.0,
+    comm=MPI.COMM_WORLD,
+):
     """
-    Solve polynomial eigenvalue problem 
+    Solve polynomial eigenvalue problem
 
         A_0 + A_1*lambda + ... + A_d*lambda^d = 0
 
@@ -247,45 +265,50 @@ def solve_PEP_shiftinvert(A_list,
         Converged eigenvector (real_part)
     eigvec_i : TYPE
         Converged eigenvectors (imag_part)
-        
+
     """
-    
-        # Build an Eigenvalue Problem Solver object
-    PEP = SLEPc.PEP(); PEP.create(comm=comm)
+
+    # Build an Eigenvalue Problem Solver object
+    PEP = SLEPc.PEP()
+    PEP.create(comm=comm)
     PEP.setOperators(A_list)
     PEP.setProblemType(problem_type)
-        # set the number of eigenvalues requested
+    # set the number of eigenvalues requested
     PEP.setDimensions(nev=nev)
-        # Set solver
+    # Set solver
     PEP.setType(solver)
-        # set eigenvalues of interest
+    # set eigenvalues of interest
     PEP.setWhichEigenpairs(SLEPc.PEP.Which.TARGET_MAGNITUDE)
-    PEP.setTarget(target) # sorting
-        # set tolerance and max iterations
-    PEP.setTolerances(tol=tol,max_it=max_it)    
-        # Set up shift-and-invert
-        # Only work if 'whichEigenpairs' is 'TARGET_XX'
-    ST=PEP.getST()
+    PEP.setTarget(target)  # sorting
+    # set tolerance and max iterations
+    PEP.setTolerances(tol=tol, max_it=max_it)
+    # Set up shift-and-invert
+    # Only work if 'whichEigenpairs' is 'TARGET_XX'
+    ST = PEP.getST()
     ST.setType(SLEPc.ST.Type.SINVERT)
-    ST.setShift(shift)        
+    ST.setShift(shift)
     PEP.setST(ST)
-        # set monitor
-    it_skip=1
-    if comm.rank==0:
-        PEP.setMonitor(lambda eps, it, nconv, eig, err :
-                       monitor_EPS_short(eps, it, nconv, eig, err,it_skip))
+    # set monitor
+    it_skip = 1
+    if comm.rank == 0:
+        PEP.setMonitor(
+            lambda eps, it, nconv, eig, err: monitor_EPS_short(
+                eps, it, nconv, eig, err, it_skip
+            )
+        )
         # parse command line options
     PEP.setFromOptions()
-        # Display all options (including those of ST object)
+    # Display all options (including those of ST object)
     # if comm.rank==0:
-    #     EPS.view()          
+    #     EPS.view()
     PEP.solve()
-    if comm.rank==0:
-        print('******************************')
+    if comm.rank == 0:
+        print("******************************")
         # Print results
     # if comm.rank==0:
-    #     SLEPc_utils.EPS_print_results(EPS)   
+    #     SLEPc_utils.EPS_print_results(EPS)
     return PEP
+
 
 def EPS_get_spectrum(EPS):
     """EPS_get_spectrum
@@ -308,22 +331,24 @@ def EPS_get_spectrum(EPS):
     """
     A = EPS.getOperators()[0]
     eigval, eigvec_r, eigvec_i = list(), list(), list()
-    vr = A.createVecRight(); vi = A.createVecRight()
+    vr = A.createVecRight()
+    vi = A.createVecRight()
     for i in range(EPS.getConverged()):
-        eigval.append(EPS.getEigenpair(i,vr,vi))
+        eigval.append(EPS.getEigenpair(i, vr, vi))
         eigvec_r.append(vr.copy())
         eigvec_i.append(vi.copy())
     # Sort by increasing real parts
-    idx=np.argsort(np.real(np.array(eigval)),axis=0)
+    idx = np.argsort(np.real(np.array(eigval)), axis=0)
     eigval = [eigval[i] for i in idx]
     eigvec_r = [eigvec_r[i] for i in idx]
     eigvec_i = [eigvec_i[i] for i in idx]
-    return (eigval,eigvec_r,eigvec_i)
+    return (eigval, eigvec_r, eigvec_i)
 
-def EPS_get_spectrum_ReImFormulation(EPS,idx_r,idx_i,tol=None):
+
+def EPS_get_spectrum_ReImFormulation(EPS, idx_r, idx_i, tol=None):
     """
-    Returns the correct spectrum for a generalized eigenvalue problem 
-    formulated by splitting real and imaginary parts. Spurious eigenvalues 
+    Returns the correct spectrum for a generalized eigenvalue problem
+    formulated by splitting real and imaginary parts. Spurious eigenvalues
     are eliminated by checking the residual.
 
     Parameters
@@ -339,30 +364,31 @@ def EPS_get_spectrum_ReImFormulation(EPS,idx_r,idx_i,tol=None):
     -------
     eigval : np.array of complex
         Eigenvalues.
-    eigvec : list of petsc4py.PETSc.Vec 
+    eigvec : list of petsc4py.PETSc.Vec
         Eigenvectors (real-valued)
     """
-    (A,B) = EPS.getOperators()
-    eigval = list(); eigvec = list()
+    (A, B) = EPS.getOperators()
+    eigval = list()
+    eigvec = list()
     vr = A.createVecRight()
     res = A.createVecRight()
     B_vr = A.createVecRight()
     B_vr_swap = A.createVecRight()
     if tol is None:
-        tol= EPS.getTolerances()[0]    
+        tol = EPS.getTolerances()[0]
     for i in range(EPS.getConverged()):
-        val = EPS.getEigenpair(i,vr) # vr = [Re(x);Re(y)]
+        val = EPS.getEigenpair(i, vr)  # vr = [Re(x);Re(y)]
         # compute residue ||A*x-val*B*x||_2
-        B.mult(vr,B_vr) # B*vr
+        B.mult(vr, B_vr)  # B*vr
         B_vr_swap[idx_r] = -B_vr[idx_i]
-        B_vr_swap[idx_i] =  B_vr[idx_r]
+        B_vr_swap[idx_i] = B_vr[idx_r]
         # res = A*vr - real(val)*B*[Re(x);Re(y)] - imag(val)*B*[-Re(y);Re(x)]
-        A.multAdd(vr,-(val.real)*B_vr-(val.imag)*B_vr_swap,res)
-        if res.norm()<tol:
+        A.multAdd(vr, -(val.real) * B_vr - (val.imag) * B_vr_swap, res)
+        if res.norm() < tol:
             eigval.append(val)
             eigvec.append(vr.copy())
         # Sort by increasing real parts
-    idx=np.argsort(np.real(np.array(eigval)),axis=0)
+    idx = np.argsort(np.real(np.array(eigval)), axis=0)
     eigval = [eigval[i] for i in idx]
     eigvec = [eigvec[i] for i in idx]
-    return (np.array(eigval),eigvec)
+    return (np.array(eigval), eigvec)
