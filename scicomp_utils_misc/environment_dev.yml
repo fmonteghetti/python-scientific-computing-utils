@@ -15,4 +15,4 @@ dependencies: # pkg_name=version=build
   - hatchling=1.25.0
   - editables=0.5
   - pip:
-    - -e . 
+    - -e .[dev] 
