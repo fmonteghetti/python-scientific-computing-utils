@@ -37,6 +37,13 @@ To use it, in the command palette of VS code:
 
 You can switch between real and complex `PetscScalar` by editing the `target` field in `.devcontainer/devcontainer.json` and selecting `Dev Containers: Rebuild Container` in the VS code command palette.
 
+# Development
+
+Format code with
+```
+ruff format
+```
+
 # License
 
 This package is distributed under the terms of the GPLv3 license.

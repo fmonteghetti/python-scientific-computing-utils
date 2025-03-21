@@ -18,4 +18,4 @@ dependencies: # pkg_name=version=build
   - editables=0.5
   - pip:
     - gmsh==4.12.*
-    - -e . 
+    - -e .[dev] 
